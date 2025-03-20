@@ -22,20 +22,27 @@ public class UserController {
     }
 
     @GetMapping()
-    public List<User> getUsers(
+    public ResponseEntity<List<User>> getUsers(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String email
     ){
          if(id != null){
              Optional<User> userById = userService.getUserById(id);
-             return userById.stream().collect(Collectors.toList());
+             if(userById.isPresent())
+                 return new ResponseEntity<>(userById.stream().toList(), HttpStatus.OK);
+             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
          } else if(username != null){
-            return userService.getUsersByName(username);
+            return new ResponseEntity<>(userService.getUsersByName(username), HttpStatus.OK);
         } else if(email != null){
-            return userService.getUserByEmail(email);
+             return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
         }
-        return userService.getAllUsers();
+
+        List<User> allUsers = userService.getAllUsers();
+         if(allUsers.isEmpty())
+             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>( allUsers, HttpStatus.OK);
 
     }
 
@@ -51,7 +58,6 @@ public class UserController {
         if (toUpdateUser != null) {
             return new ResponseEntity<>(toUpdateUser, HttpStatus.OK);
         }
-
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
     }
