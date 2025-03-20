@@ -57,7 +57,6 @@ public class UserService {
             workingUser.setPersmissionLevel(user.getPersmissionLevel());
             workingUser.setAdr(user.getAdr());
             workingUser.setKd(user.getKd());
-            workingUser.setTeamId(user.getTeamId());
             workingUser.setRanking(user.getRanking());
 
             userRepository.save(oldUser.get());

@@ -7,90 +7,117 @@ public class Team {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id" ,unique = true, nullable = false)
+    @Column(name = "id", unique = true, nullable = false)
     private Long teamId;
 
     @Column(unique = true, nullable = false)
     private String teamName;
-    private Long captainId;
-    private Long player2Id;
-    private Long player3Id;
-    private Long player4Id;
-    private Long player5Id;
-    private Long player6Id;
-    private Long player7Id;
+
+    // Relacja do kapitana – użytkownik, który jest właścicielem drużyny
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "captain_id", nullable = false)
+    private User captain;
+
+    // Pozostali gracze – opcjonalnie, mogą być null, jeśli jeszcze nie dołączyli do drużyny
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player2_id")
+    private User player2;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player3_id")
+    private User player3;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player4_id")
+    private User player4;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player5_id")
+    private User player5;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player6_id")
+    private User player6;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player7_id")
+    private User player7;
 
     private Integer teamRanking = 0;
 
     public Team() {}
 
-    public Team(String teamName, Long captainId) {
-        this.captainId = captainId;
+    public Team(String teamName, User captain) {
         this.teamName = teamName;
-    }
-
-    public Long getId() {
-        return teamId;
+        this.captain = captain;
     }
 
     public Long getTeamId() {
         return teamId;
     }
 
-    public Long getCaptainId() {
-        return captainId;
+    public String getTeamName() {
+        return teamName;
     }
 
-    public void setCaptainId(Long captainId) {
-        this.captainId = captainId;
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
     }
 
-    public Long getPlayer2Id() {
-        return player2Id;
+    public User getCaptain() {
+        return captain;
     }
 
-    public void setPlayer2Id(Long player2Id) {
-        this.player2Id = player2Id;
+    public void setCaptain(User captain) {
+        this.captain = captain;
     }
 
-    public Long getPlayer3Id() {
-        return player3Id;
+    public User getPlayer2() {
+        return player2;
     }
 
-    public void setPlayer3Id(Long player3Id) {
-        this.player3Id = player3Id;
+    public void setPlayer2(User player2) {
+        this.player2 = player2;
     }
 
-    public Long getPlayer4Id() {
-        return player4Id;
+    public User getPlayer3() {
+        return player3;
     }
 
-    public void setPlayer4Id(Long player4Id) {
-        this.player4Id = player4Id;
+    public void setPlayer3(User player3) {
+        this.player3 = player3;
     }
 
-    public Long getPlayer5Id() {
-        return player5Id;
+    public User getPlayer4() {
+        return player4;
     }
 
-    public void setPlayer5Id(Long player5Id) {
-        this.player5Id = player5Id;
+    public void setPlayer4(User player4) {
+        this.player4 = player4;
     }
 
-    public Long getPlayer6Id() {
-        return player6Id;
+    public User getPlayer5() {
+        return player5;
     }
 
-    public void setPlayer6Id(Long player6Id) {
-        this.player6Id = player6Id;
+    public void setPlayer5(User player5) {
+        this.player5 = player5;
     }
 
-    public Long getPlayer7Id() {
-        return player7Id;
+    public User getPlayer6() {
+        return player6;
     }
 
-    public void setPlayer7Id(Long player7Id) {
-        this.player7Id = player7Id;
+    public void setPlayer6(User player6) {
+        this.player6 = player6;
+    }
+
+    public User getPlayer7() {
+        return player7;
+    }
+
+    public void setPlayer7(User player7) {
+        this.player7 = player7;
     }
 
     public Integer getTeamRanking() {
@@ -99,13 +126,5 @@ public class Team {
 
     public void setTeamRanking(Integer teamRanking) {
         this.teamRanking = teamRanking;
-    }
-
-    public String getTeamname() {
-        return teamName;
-    }
-
-    public void setTeamname(String username) {
-        this.teamName = username;
     }
 }

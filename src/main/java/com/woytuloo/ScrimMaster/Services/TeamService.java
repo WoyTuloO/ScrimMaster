@@ -3,13 +3,13 @@ package com.woytuloo.ScrimMaster.Services;
 import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Component
+@Service
 public class TeamService {
     private final TeamRepository teamRepository;
 
@@ -19,8 +19,7 @@ public class TeamService {
     }
 
     public Team addTeam(Team team) {
-        teamRepository.save(team);
-        return team;
+        return teamRepository.save(team);
     }
 
     public List<Team> getAllTeams() {
@@ -32,7 +31,9 @@ public class TeamService {
     }
 
     public List<Team> getTeamByName(String name) {
-        return teamRepository.findAll().stream().filter(team -> team.getTeamname().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
+        return teamRepository.findAll().stream()
+                .filter(team -> team.getTeamName().toLowerCase().contains(name.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     public void deleteTeam(Long id) {
@@ -40,24 +41,20 @@ public class TeamService {
     }
 
     public Team updateTeam(Team team) {
-
-        Optional<Team> optionalTeam = teamRepository.findById(team.getId());
-
+        Optional<Team> optionalTeam = teamRepository.findById(team.getTeamId());
         if(optionalTeam.isPresent()) {
             Team workingTeam = optionalTeam.get();
-            workingTeam.setTeamname(team.getTeamname());
-            workingTeam.setCaptainId(team.getCaptainId());
-            workingTeam.setPlayer2Id(team.getPlayer2Id());
-            workingTeam.setPlayer3Id(team.getPlayer3Id());
-            workingTeam.setPlayer4Id(team.getPlayer4Id());
-            workingTeam.setPlayer5Id(team.getPlayer5Id());
-            workingTeam.setPlayer6Id(team.getPlayer6Id());
-            workingTeam.setPlayer7Id(team.getPlayer7Id());
+            workingTeam.setTeamName(team.getTeamName());
+            workingTeam.setCaptain(team.getCaptain());
+            workingTeam.setPlayer2(team.getPlayer2());
+            workingTeam.setPlayer3(team.getPlayer3());
+            workingTeam.setPlayer4(team.getPlayer4());
+            workingTeam.setPlayer5(team.getPlayer5());
+            workingTeam.setPlayer6(team.getPlayer6());
+            workingTeam.setPlayer7(team.getPlayer7());
             workingTeam.setTeamRanking(team.getTeamRanking());
-            teamRepository.save(workingTeam);
+            return teamRepository.save(workingTeam);
         }
-
         return null;
-
     }
 }

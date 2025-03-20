@@ -10,13 +10,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
+
     private String username;
     private String password;
     private String email;
     private double kd;
     private double adr;
     private int ranking;
-    private long teamId;
     private Integer persmissionLevel = 0;
 
     public User(String username, String password, String email) {
@@ -41,14 +41,6 @@ public class User {
 
     public void setPersmissionLevel(Integer persmissionLevel) {
         this.persmissionLevel = persmissionLevel;
-    }
-
-    public long getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(long teamId) {
-        this.teamId = teamId;
     }
 
     public int getRanking() {
