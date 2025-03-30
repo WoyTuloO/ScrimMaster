@@ -1,12 +1,11 @@
-
 import './App.css'
 import Nav from "./assets/Nav.tsx";
 import Container from "@mui/material/Container";
-import {createTheme, CssBaseline, Paper, ThemeProvider} from "@mui/material";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-
+import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
+import { Route, Routes } from "react-router-dom";
+import Login from './components/Login.tsx';
+import Register from './components/Register.tsx';
+import LandingPage from './components/LandingPage.tsx';
 
 const theme = createTheme({
   palette: {
@@ -19,29 +18,23 @@ const theme = createTheme({
     secondary:{
       main: '#38168e',
     }
-
   },
 });
 
-
 function App() {
-
-  return<>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+  return (
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
         <Container disableGutters maxWidth={false}>
-          <Nav></Nav>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" component={App} />
-              </Routes>
-            </BrowserRouter>
+          <Nav />
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
         </Container>
-    </ThemeProvider>
-  </>
-
-
-
+      </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
