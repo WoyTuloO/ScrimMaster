@@ -73,7 +73,14 @@ function Register() {
     return (
         <Box
             sx={{
-                height: { xs: 'calc(100vh - 56px)', md: 'calc(100vh - 68.5px)' },
+                opacity: 0,
+                animation: 'fadeIn 1s forwards',
+                '@keyframes fadeIn': {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 }
+                },
+
+                height: '100vh',
                 background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/../../public/img1.jpg)`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

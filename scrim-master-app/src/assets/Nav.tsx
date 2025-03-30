@@ -14,6 +14,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import PersonIcon from '@mui/icons-material/Person';
 import {Link, Link as RouterLink } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
+import GamepadIcon from '@mui/icons-material/Gamepad';
 
 const pages = ['Teams', 'Scrims', 'Players'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -50,7 +51,7 @@ const ResponsiveAppBar: React.FC = () => {
         <AppBar position="static">
             <Container maxWidth={false} sx={{ bgcolor: 'primary.main' }}>
                 <Toolbar disableGutters>
-                    <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <GamepadIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                     <Typography
                         variant="h6"
                         noWrap
