@@ -83,11 +83,12 @@ const Login: React.FC = () => {
             </Paper>
             <Snackbar
                 open={snackbar.open}
-                autoHideDuration={3000}
+                autoHideDuration={2000}
+                onClose={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 TransitionComponent={SlideTransition}
             >
-                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
+                <Alert onClose={handleCloseSnackbar} variant="filled" severity={snackbar.severity} sx={{ width: '100%', mt: 8 }}>
                     {snackbar.message}
                 </Alert>
             </Snackbar>
