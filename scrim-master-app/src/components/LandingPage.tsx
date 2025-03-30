@@ -1,5 +1,8 @@
 import React from 'react';
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Typography, Container, Button } from '@mui/material';
+import Features from './Features.tsx';
+import HowItWorks from "./HowItWorks";
+import CTASection from "./CTASection";
 
 const LandingPage: React.FC = () => {
     return (
@@ -10,13 +13,18 @@ const LandingPage: React.FC = () => {
                 height: '100vh'
             }}
         >
-            {/* Pierwsza sekcja – pełnoekranowy blok tytulowy */}
             <Box
                 id="section1"
                 sx={{
+
+                    opacity: 0,
+                    animation: 'fadeIn 1s forwards',
+                    '@keyframes fadeIn': {
+                        from: { opacity: 0 },
+                        to: { opacity: 1 }
+                    },
                     height: '100vh',
                     background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/../../public/img1.jpg)`,
-
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     backgroundBlendMode: "darken",
@@ -48,50 +56,9 @@ const LandingPage: React.FC = () => {
                     Teamplay
                 </Typography>
             </Box>
-
-            {/* Druga sekcja – przykładowa zawartość */}
-            <Box
-                id="section2"
-                sx={{
-                    height: '100vh',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: 'background.default',
-                    scrollSnapAlign: 'start'
-                }}
-            >
-                <Container>
-                    <Typography variant="h4" sx={{ mb: 2 }}>
-                        Sekcja 2
-                    </Typography>
-                    <Typography variant="body1">
-                        Tutaj możesz umieścić dodatkową zawartość, opisy, przyciski lub inne elementy.
-                    </Typography>
-                </Container>
-            </Box>
-
-            {/*/!* Kolejna sekcja *!/*/}
-            {/*<Box*/}
-            {/*    id="section3"*/}
-            {/*    sx={{*/}
-            {/*        height: '100vh',*/}
-            {/*        display: 'flex',*/}
-            {/*        alignItems: 'center',*/}
-            {/*        justifyContent: 'center',*/}
-            {/*        backgroundColor: '#e0e0e0',*/}
-            {/*        scrollSnapAlign: 'start'*/}
-            {/*    }}*/}
-            {/*>*/}
-            {/*    <Container>*/}
-            {/*        <Typography variant="h4" sx={{ mb: 2 }}>*/}
-            {/*            Sekcja 3*/}
-            {/*        </Typography>*/}
-            {/*        <Typography variant="body1">*/}
-            {/*            Kolejna sekcja z zawartością.*/}
-            {/*        </Typography>*/}
-            {/*    </Container>*/}
-            {/*</Box>*/}
+            <Features />
+            <HowItWorks />
+            <CTASection />
         </Box>
     );
 };
