@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import PersonIcon from '@mui/icons-material/Person';
-import { Link as RouterLink } from 'react-router-dom';
+import {Link, Link as RouterLink } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 
 const pages = ['Teams', 'Scrims', 'Players'];
@@ -48,7 +48,7 @@ const ResponsiveAppBar: React.FC = () => {
 
     return (
         <AppBar position="static">
-            <Container maxWidth={false} sx={{ bgcolor: '#5223c4' }}>
+            <Container maxWidth={false} sx={{ bgcolor: 'primary.main' }}>
                 <Toolbar disableGutters>
                     <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                     <Typography
@@ -59,9 +59,9 @@ const ResponsiveAppBar: React.FC = () => {
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
+                            fontFamily: 'Montserrat',
                             fontWeight: 700,
-                            letterSpacing: '.1rem',
+                            letterSpacing: '1',
                             color: 'inherit',
                             textDecoration: 'none'
                         }}
@@ -85,9 +85,31 @@ const ResponsiveAppBar: React.FC = () => {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center">{page}</Typography>
+                                    <Typography textAlign="center" sx={{color: 'inherit'}}>{page}</Typography>
                                 </MenuItem>
                             ))}
+
+                            {!isAuthenticated &&
+                                [
+                                    <MenuItem
+                                        key="login"
+                                        component={RouterLink}
+                                        to="/login"
+                                        onClick={handleCloseNavMenu}
+                                    >
+                                        <Typography textAlign="center">Login</Typography>
+                                    </MenuItem>,
+                                    <MenuItem
+                                        key="register"
+                                        component={RouterLink}
+                                        to="/register"
+                                        onClick={handleCloseNavMenu}
+                                    >
+                                        <Typography textAlign="center">Register</Typography>
+                                    </MenuItem>
+                                ]
+                            }
+
                         </Menu>
                     </Box>
 
@@ -101,9 +123,9 @@ const ResponsiveAppBar: React.FC = () => {
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
                             flexGrow: 1,
-                            fontFamily: 'monospace',
+                            fontFamily: 'Montserrat',
                             fontWeight: 700,
-                            letterSpacing: '.3rem',
+                            letterSpacing: '.2rem',
                             color: 'inherit',
                             textDecoration: 'none'
                         }}
@@ -118,7 +140,7 @@ const ResponsiveAppBar: React.FC = () => {
                                 component={RouterLink}
                                 to={`/${page.toLowerCase()}`}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
+                                sx={{ my: 2, color: 'black', display: 'block', fontWeight: 700,fontFamily: 'Montserrat' }}
                             >
                                 {page}
                             </Button>
@@ -130,7 +152,7 @@ const ResponsiveAppBar: React.FC = () => {
                             <>
                                 <Tooltip title="Open settings">
                                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                        <PersonIcon fontSize="large" sx={{ color: 'white' }} />
+                                        <PersonIcon fontSize="large" sx={{ color: 'background.default' }} />
                                     </IconButton>
                                 </Tooltip>
                                 <Menu
@@ -145,17 +167,17 @@ const ResponsiveAppBar: React.FC = () => {
                                 >
                                     {settings.map((setting) => (
                                         <MenuItem key={setting} onClick={() => handleSettingClick(setting)}>
-                                            <Typography textAlign="center">{setting}</Typography>
+                                            <Typography textAlign="center" sx={{fontFamily: 'Montserrat'}}>{setting}</Typography>
                                         </MenuItem>
                                     ))}
                                 </Menu>
                             </>
                         ) : (
-                            <Box>
-                                <Button component={RouterLink} to="/login" sx={{ color: 'white' }}>
+                            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                                <Button component={RouterLink} variant="outlined" to="/login" sx={{ borderColor : "secondary.main" , borderWidth: 2, fontFamily: 'Montserrat', color: 'black', fontWeight: 700, mr: 1}}>
                                     Login
                                 </Button>
-                                <Button component={RouterLink} to="/register" sx={{ color: 'white' }}>
+                                <Button component={RouterLink} variant="contained" to="/register" sx={{ bgcolor: "secondary.main", fontFamily: 'Montserrat', color: 'white', fontWeight: 700, }}>
                                     Register
                                 </Button>
                             </Box>
