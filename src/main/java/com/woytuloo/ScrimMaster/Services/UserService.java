@@ -4,7 +4,9 @@ package com.woytuloo.ScrimMaster.Services;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +46,13 @@ public class UserService {
     }
 
     public User addUser(User user) {
-        userRepository.save(user);
-        return user;
+        if(userRepository.findByUsername(user.getUsername()).isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Użytkownik o takim nicku już istnieje");
+        }
+        if(userRepository.findByEmail(user.getEmail()).isPresent()){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Użytkownik o takim adresie email już istnieje");
+        }
+        return userRepository.save(user);
     }
 
     public User updateUser(User user) {

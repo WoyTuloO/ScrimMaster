@@ -11,8 +11,13 @@ public class User {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(unique = true, nullable = false)
     private String email;
     private double kd;
     private double adr;
