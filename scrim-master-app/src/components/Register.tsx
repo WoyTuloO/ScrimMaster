@@ -81,7 +81,6 @@ function Register() {
                         variant="outlined"
                         label="Username"
                         required
-                        autoFocus
                         fullWidth
                     />
                     <TextField

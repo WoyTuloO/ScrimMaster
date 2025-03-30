@@ -62,10 +62,10 @@ const Login: React.FC = () => {
 
     return (
         <Container maxWidth="xs">
-            <Paper elevation={4} sx={{ padding: 2, mt: 10 }}>
+            <Paper elevation={4} sx={{ padding: 2, mt: 10 , bgcolor: 'forms.main' }} >
                 <Typography variant="h5" align="center">Log in</Typography>
                 <Box component="form" onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
-                    <TextField name="username" label="Login" variant="outlined" required autoFocus fullWidth />
+                    <TextField name="username" label="Login" variant="outlined" required fullWidth />
                     <TextField name="password" label="Password" variant="outlined" type="password" required fullWidth sx={{ mt: 2 }} />
                     <FormControlLabel
                         sx={{ mt: 1, ml: 0 }}

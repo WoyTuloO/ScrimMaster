@@ -9,17 +9,35 @@ import LandingPage from './components/LandingPage.tsx';
 import {AuthProvider} from "./assets/AuthContext.js";
 
 const theme = createTheme({
+  // palette: {
+  //   background: {
+  //     default: '#272727',
+  //   },
+  //   primary: {
+  //     main: "#5223c4",
+  //   },
+  //   secondary:{
+  //     main: '#38168e',
+  //   },
+  //   forms:{
+  //     main: '#b0b9e1',
+  //   }
+  // },
   palette: {
     background: {
-      default: 'white',
+      default: '#363636',
     },
     primary: {
-      main: "#5223c4",
+      main: "#CCA43B",
     },
     secondary:{
-      main: '#38168e',
+      main: '#242F40',
+    },
+    forms:{
+      main: '#FFFFFF',
     }
   },
+
 });
 
 function App() {
