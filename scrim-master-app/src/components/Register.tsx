@@ -71,6 +71,17 @@ function Register() {
     };
 
     return (
+        <Box
+            sx={{
+                height: { xs: 'calc(100vh - 56px)', md: 'calc(100vh - 68.5px)' },
+                background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/../../public/img1.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                display: 'flex',
+                alignItems: 'center'
+            }}
+        >
         <Container maxWidth="xs">
             <Paper elevation={4} sx={{ padding: 2, mt: 10 }}>
                 <Typography variant="h5" sx={{ textAlign: "center" }}>Register</Typography>
@@ -133,6 +144,7 @@ function Register() {
                 </Alert>
             </Snackbar>
         </Container>
+        </Box>
     );
 }
 
