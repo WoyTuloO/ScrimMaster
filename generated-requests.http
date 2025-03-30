@@ -39,7 +39,7 @@ GET http://localhost:8080/api/user
 <> 2025-03-19T205019.200.json
 
 ### username = usa
-GET http://localhost:8080/api/user?username=usa2
+GET http://localhost:8080/api/user?username=user2
 
 ### id = 2
 GET http://localhost:8080/api/user?id=3

@@ -6,6 +6,7 @@ import { Route, Routes } from "react-router-dom";
 import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
 import LandingPage from './components/LandingPage.tsx';
+import {AuthProvider} from "./assets/AuthContext.js";
 
 const theme = createTheme({
   palette: {
@@ -23,17 +24,19 @@ const theme = createTheme({
 
 function App() {
   return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Container disableGutters maxWidth={false}>
-          <Nav />
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-          </Routes>
-        </Container>
-      </ThemeProvider>
+      <AuthProvider>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Container disableGutters maxWidth={false}>
+            <Nav />
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+            </Routes>
+          </Container>
+        </ThemeProvider>
+      </AuthProvider>
   );
 }
 
