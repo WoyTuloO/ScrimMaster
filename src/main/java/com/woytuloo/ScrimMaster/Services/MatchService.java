@@ -46,8 +46,8 @@ public class MatchService {
         Optional<Match> matchOptional = matchRepository.findById(match.getId());
 
         if (matchOptional.isPresent()) {
-            matchOptional.get().setT1Score(match.getT1Score());
-            matchOptional.get().setT2Score(match.getT2Score());
+            matchOptional.get().setTeam1Score(match.getTeam1Score());
+            matchOptional.get().setTeam2Score(match.getTeam2Score());
 
         }
 
