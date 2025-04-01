@@ -62,6 +62,7 @@ const ResponsiveAppBar: React.FC = () => {
                             display: { xs: 'none', md: 'flex' },
                             fontFamily: 'Montserrat',
                             fontWeight: 700,
+                            fontSize: "1.5rem",
                             letterSpacing: '1',
                             color: 'inherit',
                             textDecoration: 'none'
@@ -141,7 +142,7 @@ const ResponsiveAppBar: React.FC = () => {
                                 component={RouterLink}
                                 to={`/${page.toLowerCase()}`}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: 'black', display: 'block', fontWeight: 700,fontFamily: 'Montserrat' }}
+                                sx={{ my: 2, color: 'black', display: 'block', fontWeight: 700,fontFamily: 'Montserrat', ":hover" : {} }}
                             >
                                 {page}
                             </Button>

@@ -41,7 +41,7 @@ GET http://localhost:8080/api/user
 ### username = usa
 GET http://localhost:8080/api/user?username=user2
 
-### id = 2
+### id = 3
 GET http://localhost:8080/api/user?id=3
 
 
