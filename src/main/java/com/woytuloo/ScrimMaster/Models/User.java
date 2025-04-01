@@ -1,7 +1,9 @@
 package com.woytuloo.ScrimMaster.Models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "users")
 public class User {
@@ -32,55 +34,4 @@ public class User {
 
     public User() { }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public Integer getPersmissionLevel() {
-        return persmissionLevel;
-    }
-
-    public void setPersmissionLevel(Integer persmissionLevel) {
-        this.persmissionLevel = persmissionLevel;
-    }
-
-    public int getRanking() {
-        return ranking;
-    }
-
-    public void setRanking(int ranking) {
-        this.ranking = ranking;
-    }
-
-    public double getAdr() {
-        return adr;
-    }
-
-    public void setAdr(double adr) {
-        this.adr = adr;
-    }
-
-    public double getKd() {
-        return kd;
-    }
-
-    public void setKd(double kd) {
-        this.kd = kd;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

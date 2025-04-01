@@ -1,7 +1,9 @@
 package com.woytuloo.ScrimMaster.Models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 public class Team {
 
@@ -13,12 +15,10 @@ public class Team {
     @Column(unique = true, nullable = false)
     private String teamName;
 
-    // Relacja do kapitana – użytkownik, który jest właścicielem drużyny
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "captain_id", nullable = false)
     private User captain;
 
-    // Pozostali gracze – opcjonalnie, mogą być null, jeśli jeszcze nie dołączyli do drużyny
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player2_id")
     private User player2;
@@ -52,79 +52,4 @@ public class Team {
         this.captain = captain;
     }
 
-    public Long getTeamId() {
-        return teamId;
-    }
-
-    public String getTeamName() {
-        return teamName;
-    }
-
-    public void setTeamName(String teamName) {
-        this.teamName = teamName;
-    }
-
-    public User getCaptain() {
-        return captain;
-    }
-
-    public void setCaptain(User captain) {
-        this.captain = captain;
-    }
-
-    public User getPlayer2() {
-        return player2;
-    }
-
-    public void setPlayer2(User player2) {
-        this.player2 = player2;
-    }
-
-    public User getPlayer3() {
-        return player3;
-    }
-
-    public void setPlayer3(User player3) {
-        this.player3 = player3;
-    }
-
-    public User getPlayer4() {
-        return player4;
-    }
-
-    public void setPlayer4(User player4) {
-        this.player4 = player4;
-    }
-
-    public User getPlayer5() {
-        return player5;
-    }
-
-    public void setPlayer5(User player5) {
-        this.player5 = player5;
-    }
-
-    public User getPlayer6() {
-        return player6;
-    }
-
-    public void setPlayer6(User player6) {
-        this.player6 = player6;
-    }
-
-    public User getPlayer7() {
-        return player7;
-    }
-
-    public void setPlayer7(User player7) {
-        this.player7 = player7;
-    }
-
-    public Integer getTeamRanking() {
-        return teamRanking;
-    }
-
-    public void setTeamRanking(Integer teamRanking) {
-        this.teamRanking = teamRanking;
-    }
 }
