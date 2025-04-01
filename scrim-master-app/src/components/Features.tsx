@@ -62,8 +62,8 @@ const FeaturesSection: React.FC = () => {
                     </Typography>
                     <Grid container spacing={2}>
                         {featureData.map((feature, index) => (
-                            <Grid item xs={12} key={index}>
-                                <Paper elevation={3} sx={{ p: 2 }}>
+                            <Grid>
+                                <Paper elevation={5} sx={{ p: 2 }}>
                                     <Typography variant="h6" sx={{ fontFamily: 'Montserrat', fontWeight: 700, mb: 1 }}>
                                         {feature.title}
                                     </Typography>

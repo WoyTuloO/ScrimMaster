@@ -101,7 +101,7 @@ const Login: React.FC = () => {
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={2000}
-                onClose={handleCloseSnackbar}
+                onClick={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 TransitionComponent={SlideTransition}
             >

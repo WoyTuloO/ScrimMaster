@@ -144,7 +144,7 @@ function Register() {
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={3000}
-                onClose={handleCloseSnackbar}
+                onClick={handleCloseSnackbar}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
                 <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
