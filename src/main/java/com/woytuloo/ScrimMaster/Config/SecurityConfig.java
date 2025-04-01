@@ -56,7 +56,7 @@ public class SecurityConfig {
                 // Wyłączamy CSRF – dla API zazwyczaj jest to potrzebne
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/**", "/register").permitAll()
+                        .requestMatchers("/api/team", "/api/team/**","/api/user/**", "/register", "/login").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
