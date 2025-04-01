@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import PersonIcon from '@mui/icons-material/Person';
-import {Link, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import GamepadIcon from '@mui/icons-material/Gamepad';
 
@@ -48,7 +48,7 @@ const ResponsiveAppBar: React.FC = () => {
     };
 
     return (
-        <AppBar position="static">
+        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
             <Container maxWidth={false} sx={{ bgcolor: 'primary.main' }}>
                 <Toolbar disableGutters>
                     <GamepadIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
