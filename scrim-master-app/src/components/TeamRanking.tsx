@@ -87,10 +87,10 @@ const RowTeam: React.FC<RowTeamProps> = ({ team }) => {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                <TableCell component="th" scope="row">
+                <TableCell component="th" scope="row" align="center">
                     {team.teamId}
                 </TableCell>
-                <TableCell>{team.teamName}</TableCell>
+                <TableCell align="center">{team.teamName}</TableCell>
                 <TableCell align="center">{team.teamRanking}</TableCell>
             </TableRow>
             <TableRow>
@@ -208,8 +208,8 @@ const TeamRanking: React.FC = () => {
                             <TableHead>
                                 <TableRow>
                                     <StyledTableCell />
-                                    <StyledTableCell>Team ID</StyledTableCell>
-                                    <StyledTableCell>Team Name</StyledTableCell>
+                                    <StyledTableCell align="center">Team ID</StyledTableCell>
+                                    <StyledTableCell align="center">Team Name</StyledTableCell>
                                     <StyledTableCell align="center">Ranking</StyledTableCell>
                                 </TableRow>
                             </TableHead>

@@ -100,7 +100,7 @@ const PlayerRanking: React.FC = () => {
                         height: "60vh"
                     }}
                     >
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                         <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontWeight: 700 }}>
                             Player Ranking
                         </Typography>
@@ -117,10 +117,10 @@ const PlayerRanking: React.FC = () => {
                         <Table stickyHeader aria-label="player ranking table">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell >Username</StyledTableCell>
-                                    <StyledTableCell align="right">KD</StyledTableCell>
-                                    <StyledTableCell align="right">ADR</StyledTableCell>
-                                    <StyledTableCell align="right">Ranking</StyledTableCell>
+                                    <StyledTableCell align="center">Username</StyledTableCell>
+                                    <StyledTableCell align="center">KD</StyledTableCell>
+                                    <StyledTableCell align="center">ADR</StyledTableCell>
+                                    <StyledTableCell align="center">Ranking</StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -128,7 +128,7 @@ const PlayerRanking: React.FC = () => {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((player) => (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={player.id}>
-                                            <TableCell>
+                                            <TableCell align="center">
                                                 <Link
                                                 component={RouterLink}
                                                 to={`/user/${player.id}`}
@@ -140,9 +140,9 @@ const PlayerRanking: React.FC = () => {
                                                 >
                                                 {player.username}</Link>
                                             </TableCell>
-                                            <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="right">{player.kd}</TableCell>
-                                            <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="right">{player.adr}</TableCell>
-                                            <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="right">{player.ranking}</TableCell>
+                                            <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="center">{player.kd}</TableCell>
+                                            <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="center">{player.adr}</TableCell>
+                                            <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="center">{player.ranking}</TableCell>
                                         </TableRow>
                                     ))}
                             </TableBody>
