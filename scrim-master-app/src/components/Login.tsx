@@ -79,22 +79,22 @@ const Login: React.FC = () => {
             }}
         >
         <Container maxWidth="xs">
-            <Paper elevation={4} sx={{ padding: 2, mt: 10 , bgcolor: 'forms.main' }} >
-                <Typography variant="h5" align="center">Log in</Typography>
+            <Paper elevation={4} sx={{ padding: 2, mt: { xs : 0 ,md :10} , bgcolor: 'forms.main' }} >
+                <Typography variant="h5" align="center" sx={{fontFamily: 'Montserrat'}}>Log in</Typography>
                 <Box component="form" onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
-                    <TextField name="username" label="Login" variant="outlined" required fullWidth />
-                    <TextField name="password" label="Password" variant="outlined" type="password" required fullWidth sx={{ mt: 2 }} />
+                    <TextField name="username" label="Login" variant="outlined" sx={{fontFamily: 'Montserrat'}} required fullWidth />
+                    <TextField name="password" label="Password" variant="outlined" type="password" sx={{mt: 2, fontFamily: 'Montserrat'}} required fullWidth/>
                     <FormControlLabel
                         sx={{ mt: 1, ml: 0 }}
                         control={<CheckBox value="remember" color="secondary" />}
                         label="Remember Me"
                     />
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>Sign in</Button>
+                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, fontFamily: 'Montserrat' }}>Sign in</Button>
                 </Box>
-                <Typography sx={{ mt: 2, textAlign: "center" }}>
+                <Typography sx={{ mt: 2, textAlign: "center", fontFamily: 'Montserrat' }}>
                     You don't have an account?
                 </Typography>
-                <Typography sx={{ textAlign: "center" }}>
+                <Typography sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>
                     <Link component={RouterLink} to="/register">Sign Up</Link>
                 </Typography>
             </Paper>

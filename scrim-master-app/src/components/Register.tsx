@@ -90,8 +90,8 @@ function Register() {
             }}
         >
         <Container maxWidth="xs">
-            <Paper elevation={4} sx={{ padding: 2, mt: 10 }}>
-                <Typography variant="h5" sx={{ textAlign: "center" }}>Register</Typography>
+            <Paper elevation={4} sx={{ padding: 2, mt: { xs : 0 ,md :10} }}>
+                <Typography variant="h5" sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>Register</Typography>
 
                 <Box component="form" onSubmit={handleRegisterSubmit} sx={{ mt: 1 }}>
                     <TextField
@@ -100,6 +100,7 @@ function Register() {
                         label="Username"
                         required
                         fullWidth
+                        sx={{ fontFamily: 'Montserrat' }}
                     />
                     <TextField
                         name="password"
@@ -108,7 +109,7 @@ function Register() {
                         type="password"
                         required
                         fullWidth
-                        sx={{ mt: 2 }}
+                        sx={{ mt: 2, fontFamily: 'Montserrat' }}
                     />
                     <TextField
                         name="repeatPassword"
@@ -117,7 +118,7 @@ function Register() {
                         type="password"
                         required
                         fullWidth
-                        sx={{ mt: 2 }}
+                        sx={{ mt: 2, fontFamily: 'Montserrat' }}
                     />
                     <TextField
                         name="email"
@@ -126,16 +127,16 @@ function Register() {
                         type="email"
                         required
                         fullWidth
-                        sx={{ mt: 2 }}
+                        sx={{ mt: 2, fontFamily: 'Montserrat' }}
                     />
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3 }}>
+                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, fontFamily: 'Montserrat' }}>
                         Sign in
                     </Button>
                 </Box>
-                <Typography sx={{ mt: 2, textAlign: "center" }}>
+                <Typography sx={{ mt: 2, textAlign: "center", fontFamily: 'Montserrat' }}>
                     You already have an account?
                 </Typography>
-                <Typography sx={{ textAlign: "center" }}>
+                <Typography sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>
                     <Link component={RouterLink} to="/login">Sign In</Link>
                 </Typography>
             </Paper>
