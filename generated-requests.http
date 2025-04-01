@@ -53,7 +53,6 @@ POST http://localhost:8080/api/team?
     Content-Type: application/x-www-form-urlencoded
 
 
-
 <> 2025-03-19T203815.500.json
 <> 2025-03-19T203803.500.json
 <> 2025-03-19T203802.500.json

@@ -15,7 +15,8 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { tableCellClasses } from '@mui/material/TableCell';
-import {Link, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
+import { Link } from '@mui/material';
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -125,12 +126,17 @@ const PlayerRanking: React.FC = () => {
                                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                                     .map((player) => (
                                         <TableRow hover role="checkbox" tabIndex={-1} key={player.id}>
-                                            <TableCell
+                                            <TableCell>
+                                                <Link
                                                 component={RouterLink}
                                                 to={`/user/${player.id}`}
-                                                sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }}
-                                            >
-                                                {player.username}
+                                                sx={{ textDecoration: 'none', color: 'inherit', '&:hover': {
+                                                        color: "#ff8000",
+                                                        textDecoration: 'underline',
+                                                    },
+                                                    fontFamily: 'Montserrat' }}
+                                                >
+                                                {player.username}</Link>
                                             </TableCell>
                                             <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="right">{player.kd}</TableCell>
                                             <TableCell sx={{ textDecoration: 'none', color: 'inherit', fontFamily: 'Montserrat' }} align="right">{player.adr}</TableCell>
