@@ -7,6 +7,9 @@ import Login from './components/Login.tsx';
 import Register from './components/Register.tsx';
 import LandingPage from './components/LandingPage.tsx';
 import {AuthProvider} from "./assets/AuthContext.js";
+import PlayerRanking from "./components/PlayerRanking.tsx";
+import TeamRanking from "./components/TeamRanking.js";
+import PublicUserProfile from "./components/PublicUserProfile.js";
 
 const theme = createTheme({
   // palette: {
@@ -51,6 +54,9 @@ function App() {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/players" element={<PlayerRanking />} />
+              <Route path="/teams" element={<TeamRanking />} />
+              <Route path="/user/:id" element={<PublicUserProfile />} />
             </Routes>
           </Container>
         </ThemeProvider>
