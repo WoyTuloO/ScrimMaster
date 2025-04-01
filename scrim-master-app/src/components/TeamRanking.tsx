@@ -64,7 +64,6 @@ interface RowTeamProps {
 const RowTeam: React.FC<RowTeamProps> = ({ team }) => {
     const [open, setOpen] = useState(false);
 
-    // Przygotowujemy listę graczy – pomijamy te, które są null
     const players = [
         { role: 'Captain', player: team.captain },
         { role: 'Player2', player: team.player2 },

@@ -4,7 +4,6 @@ export interface User {
     id: number;
     username: string;
     email: string;
-    // inne pola, jeśli potrzebne
 }
 
 interface AuthContextType {
@@ -30,22 +29,20 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
-    // Funkcja login – używamy promise
     const login = (username: string, password: string): Promise<void> => {
         return fetch('http://localhost:8080/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ username, password }),
-            credentials: 'include' // Ważne – przesyłamy ciasteczka (JSESSIONID)
+            credentials: 'include'
         })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Niepoprawne dane logowania');
                 }
-                return response.text(); // lub response.json() w zależności od backendu
+                return response.text();
             })
             .then(() => {
-                // Ustawiamy dane użytkownika – tutaj symulujemy dane
                 const userData: User = {
                     id: 1,
                     username,
@@ -55,7 +52,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
             });
     };
 
-    // Funkcja logout – czyści stan po wylogowaniu
     const logout = (): Promise<void> => {
         return fetch('http://localhost:8080/logout', {
             method: 'POST',
