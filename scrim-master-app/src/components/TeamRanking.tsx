@@ -48,11 +48,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: "#ff8000",
         color: theme.palette.common.black,
+        fontSize: 18,
         fontWeight: 'bold',
         fontFamily: 'Montserrat',
     },
     [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Montserrat',
     },
 }));
@@ -186,10 +187,9 @@ const TeamRanking: React.FC = () => {
                         background: 'linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75))',
                         display: 'grid',
                         gridTemplateRows: 'auto 1fr auto',
-                        height: "60vh",
+                        height: "60vh"
                     }}
                 >
-                    {/* Nagłówek z tytułem i przyciskiem Refresh */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
                         <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontWeight: 700 }}>
                             Team Ranking
@@ -203,7 +203,6 @@ const TeamRanking: React.FC = () => {
                             Refresh
                         </Button>
                     </Box>
-                    {/* Obszar tabeli – przewijalny */}
                     <TableContainer sx={{ overflow: 'auto' }}>
                         <Table stickyHeader aria-label="collapsible team table">
                             <TableHead>

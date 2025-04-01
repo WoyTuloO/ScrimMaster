@@ -23,11 +23,12 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
         backgroundColor: "#ff8000",
         color: theme.palette.common.black,
+        fontSize: 18,
         fontWeight: 'bold',
         fontFamily: 'Montserrat',
     },
     [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
+        fontSize: 16,
         fontFamily: 'Montserrat'
     },
 }));
@@ -71,7 +72,7 @@ const PlayerRanking: React.FC = () => {
         setPage(0);
     };
 
-    // @ts-ignore
+
     return (
         <Box
             sx={{
@@ -95,9 +96,10 @@ const PlayerRanking: React.FC = () => {
                     elevation={4}
                     sx={{
                         padding: 2,
-                        background: 'linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75))'
+                        background: 'linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75))',
+                        height: "60vh"
                     }}
-                >
+                    >
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
                         <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontWeight: 700 }}>
                             Player Ranking
