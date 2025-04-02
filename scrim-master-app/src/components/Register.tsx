@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Container from "@mui/material/Container";
-import { Link, Paper, TextField, Alert, Snackbar, Slide } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import { Link as RouterLink } from "react-router-dom";
+import Container from '@mui/material/Container';
+import { Link, Paper, TextField, Alert, Snackbar, Slide } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { Link as RouterLink } from 'react-router-dom';
 import { SlideProps } from '@mui/material/Slide';
 
 function SlideTransition(props: SlideProps) {
@@ -19,7 +19,10 @@ function Register() {
     );
     const navigate = useNavigate();
 
-    const handleCloseSnackbar = (_event?: React.SyntheticEvent, reason?: string) => {
+    const handleCloseSnackbar = (
+        _event: React.SyntheticEvent | Event,
+        reason: string
+    ) => {
         if (reason === 'clickaway') {
             return;
         }
@@ -31,7 +34,17 @@ function Register() {
         const formData = new FormData(e.currentTarget);
         const username = formData.get('username') as string;
         const password = formData.get('password') as string;
+        const repeatPassword = formData.get('repeatPassword') as string;
         const email = formData.get('email') as string;
+
+        if (password !== repeatPassword) {
+            setSnackbar({
+                open: true,
+                message: "Passwords do not match",
+                severity: "error"
+            });
+            return;
+        }
 
         const payload = {
             username,
@@ -53,23 +66,35 @@ function Register() {
         })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Błąd podczas rejestracji: " + response.statusText);
+                    return response.clone().json().then(errorData => {
+                        throw new Error(errorData.message || "Błąd podczas rejestracji");
+                    });
                 }
                 return response.json();
             })
             .then(data => {
                 console.log("Rejestracja przebiegła pomyślnie:", data);
-                setSnackbar({ open: true, message: "Rejestracja przebiegła pomyślnie. Przekierowywanie...", severity: "success" });
+                setSnackbar({
+                    open: true,
+                    message: "Rejestracja przebiegła pomyślnie. Przekierowywanie...",
+                    severity: "success"
+                });
                 setTimeout(() => {
                     navigate('/login');
                 }, 1500);
             })
             .catch(error => {
-                console.error("Wystąpił błąd:", error);
-                setSnackbar({ open: true, message: error.message, severity: "error" });
+                console.error("Wystąpił błąd:", error.message);
+                setSnackbar({
+                    open: true,
+                    message: error.message,
+                    severity: "error"
+                });
             });
+
     };
 
+    // @ts-ignore
     return (
         <Box
             sx={{
@@ -79,7 +104,6 @@ function Register() {
                     from: { opacity: 0 },
                     to: { opacity: 1 }
                 },
-
                 height: '100vh',
                 background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),url(/../../public/img1.jpg)`,
                 backgroundSize: 'cover',
@@ -89,69 +113,68 @@ function Register() {
                 alignItems: 'center'
             }}
         >
-        <Container maxWidth="xs">
-            <Paper elevation={4} sx={{ padding: 2, mt: { xs : 0 ,md :10} }}>
-                <Typography variant="h5" sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>Register</Typography>
-
-                <Box component="form" onSubmit={handleRegisterSubmit} sx={{ mt: 1 }}>
-                    <TextField
-                        name="username"
-                        variant="outlined"
-                        label="Username"
-                        required
-                        fullWidth
-                        sx={{ fontFamily: 'Montserrat' }}
-                    />
-                    <TextField
-                        name="password"
-                        variant="outlined"
-                        label="Password"
-                        type="password"
-                        required
-                        fullWidth
-                        sx={{ mt: 2, fontFamily: 'Montserrat' }}
-                    />
-                    <TextField
-                        name="repeatPassword"
-                        variant="outlined"
-                        label="Repeat password"
-                        type="password"
-                        required
-                        fullWidth
-                        sx={{ mt: 2, fontFamily: 'Montserrat' }}
-                    />
-                    <TextField
-                        name="email"
-                        variant="outlined"
-                        label="Email"
-                        type="email"
-                        required
-                        fullWidth
-                        sx={{ mt: 2, fontFamily: 'Montserrat' }}
-                    />
-                    <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, fontFamily: 'Montserrat' }}>
-                        Sign in
-                    </Button>
-                </Box>
-                <Typography sx={{ mt: 2, textAlign: "center", fontFamily: 'Montserrat' }}>
-                    You already have an account?
-                </Typography>
-                <Typography sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>
-                    <Link component={RouterLink} to="/login">Sign In</Link>
-                </Typography>
-            </Paper>
-
-            <Snackbar
-                open={snackbar.open}
-                autoHideDuration={3000}
-                onClick={handleCloseSnackbar}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: '100%' }}>
-                    {snackbar.message}
-                </Alert>
-            </Snackbar>
-        </Container>
+            <Container maxWidth="xs">
+                <Paper elevation={4} sx={{ padding: 2, mt: { xs: 0, md: 10 } }}>
+                    <Typography variant="h5" sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>Register</Typography>
+                    <Box component="form" onSubmit={handleRegisterSubmit} sx={{ mt: 1 }}>
+                        <TextField
+                            name="username"
+                            variant="outlined"
+                            label="Username"
+                            required
+                            fullWidth
+                            sx={{ fontFamily: 'Montserrat' }}
+                        />
+                        <TextField
+                            name="password"
+                            variant="outlined"
+                            label="Password"
+                            type="password"
+                            required
+                            fullWidth
+                            sx={{ mt: 2, fontFamily: 'Montserrat' }}
+                        />
+                        <TextField
+                            name="repeatPassword"
+                            variant="outlined"
+                            label="Repeat password"
+                            type="password"
+                            required
+                            fullWidth
+                            sx={{ mt: 2, fontFamily: 'Montserrat' }}
+                        />
+                        <TextField
+                            name="email"
+                            variant="outlined"
+                            label="Email"
+                            type="email"
+                            required
+                            fullWidth
+                            sx={{ mt: 2, fontFamily: 'Montserrat' }}
+                        />
+                        <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, fontFamily: 'Montserrat' }}>
+                            Sign Up
+                        </Button>
+                    </Box>
+                    <Typography sx={{ mt: 2, textAlign: "center", fontFamily: 'Montserrat' }}>
+                        You already have an account?
+                    </Typography>
+                    <Typography sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>
+                        <Link component={RouterLink} to="/login">Sign In</Link>
+                    </Typography>
+                </Paper>
+                <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={3000}
+                    onClose={handleCloseSnackbar}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                    sx={{mt:10}}
+                >
+                    <Alert onClose={handleCloseSnackbar} variant={"filled"} severity={snackbar.severity} sx={{ width: '100%' }}>
+                        {snackbar.message}
+                    </Alert>
+                </Snackbar>
+            </Container>
         </Box>
     );
 }

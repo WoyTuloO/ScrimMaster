@@ -9,9 +9,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { FormControlLabel, Link } from '@mui/material';
-// @ts-ignore
-import { CheckBox } from '@mui/icons-material';
+import { Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import Slide, { SlideProps } from '@mui/material/Slide';
 import {AuthContext} from '../assets/AuthContext';
@@ -84,11 +82,6 @@ const Login: React.FC = () => {
                 <Box component="form" onSubmit={handleLoginSubmit} sx={{ mt: 1 }}>
                     <TextField name="username" label="Login" variant="outlined" sx={{fontFamily: 'Montserrat'}} required fullWidth />
                     <TextField name="password" label="Password" variant="outlined" type="password" sx={{mt: 2, fontFamily: 'Montserrat'}} required fullWidth/>
-                    <FormControlLabel
-                        sx={{ mt: 1, ml: 0 }}
-                        control={<CheckBox value="remember" color="secondary" />}
-                        label="Remember Me"
-                    />
                     <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, fontFamily: 'Montserrat' }}>Sign in</Button>
                 </Box>
                 <Typography sx={{ mt: 2, textAlign: "center", fontFamily: 'Montserrat' }}>
