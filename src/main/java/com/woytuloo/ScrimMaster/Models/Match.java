@@ -15,17 +15,22 @@ public class Match {
     @Column(name="id", unique = true, nullable = false)
     private Long id;
 
-    private Long team1Id;
-    private Long team2Id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team1Id", nullable = false)
+    private Team team1;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "team2Id", nullable = false)
+    private Team team2;
 
     private int team1Score;
     private int team2Score;
 
     public Match() {}
 
-    public Match(Long team1Id, Long team2Id) {
-        this.team1Id = team1Id;
-        this.team2Id = team2Id;
+    public Match(Team team1, Team team2) {
+        this.team1 = team1;
+        this.team2 = team2;
         this.team1Score = 0;
         this.team2Score = 0;
     }

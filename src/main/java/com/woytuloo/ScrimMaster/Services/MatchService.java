@@ -28,7 +28,7 @@ public class MatchService {
     }
 
     public List<Match> getTeamMatches(long teamId){
-        return matchRepository.findAll().stream().filter(m -> m.getTeam1Id() == teamId || m.getTeam2Id() == teamId).collect(Collectors.toList());
+        return matchRepository.findAll().stream().filter(m -> m.getTeam1().getTeamId() == teamId || m.getTeam2().getTeamId() == teamId).collect(Collectors.toList());
     }
 
 
