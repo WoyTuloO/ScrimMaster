@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, {createContext, useState, ReactNode, useEffect} from 'react';
 
 export interface User {
     id: number;
@@ -29,6 +29,26 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
 
+    useEffect(() => {
+        fetch('http://localhost:8080/api/user/currentUser', {
+            method: 'GET',
+            credentials: 'include'
+        })
+            .then(res => {
+                if (res.ok) {
+                    return res.json();
+                }
+                throw new Error('Brak aktywnej sesji');
+            })
+            .then((data: User) => {
+                setUser(data);
+            })
+            .catch(err => {
+                console.error(err);
+                setUser(null);
+            });
+    }, []);
+
     const login = (username: string, password: string): Promise<void> => {
         return fetch('http://localhost:8080/login', {
             method: 'POST',
@@ -43,12 +63,19 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
                 return response.text();
             })
             .then(() => {
-                const userData: User = {
-                    id: 1,
-                    username,
-                    email: `${username}@example.com`
-                };
-                setUser(userData);
+                return fetch('http://localhost:8080/api/user/currentUser', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Nie udało się pobrać danych użytkownika');
+                }
+                return res.json();
+            })
+            .then((data: User) => {
+                setUser(data);
             });
     };
 

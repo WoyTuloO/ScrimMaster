@@ -51,9 +51,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CorsConfigurationSource corsConfigurationSource) throws Exception {
         return http
-                // Konfigurujemy CORS przy użyciu naszego beana
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                // Wyłączamy CSRF – dla API zazwyczaj jest to potrzebne
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/team", "/api/team/**","/api/user/**", "/register", "/login").permitAll()
