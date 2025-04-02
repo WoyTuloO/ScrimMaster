@@ -1,10 +1,13 @@
 package com.woytuloo.ScrimMaster.Controllers;
 
+import com.woytuloo.ScrimMaster.DTO.DTOMappers;
+import com.woytuloo.ScrimMaster.DTO.UserDTO;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -45,6 +48,20 @@ public class UserController {
         return new ResponseEntity<>( allUsers, HttpStatus.OK);
 
     }
+
+    @GetMapping("/currentUser")
+    public ResponseEntity<?> getCurrentUser() {
+        Optional<User> userOpt = userService.getCurrentUser();
+        if (userOpt.isPresent()) {
+            return new ResponseEntity<>(DTOMappers.mapToUserDTO(userOpt.get()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
+
+
 
     @PostMapping
     public ResponseEntity<User> addUser(@RequestBody User user){
