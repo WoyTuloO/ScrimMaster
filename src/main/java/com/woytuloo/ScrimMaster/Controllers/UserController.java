@@ -1,18 +1,16 @@
 package com.woytuloo.ScrimMaster.Controllers;
 
 import com.woytuloo.ScrimMaster.DTO.DTOMappers;
-import com.woytuloo.ScrimMaster.DTO.UserDTO;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path ="api/user")
@@ -38,7 +36,7 @@ public class UserController {
          } else if(username != null){
             return new ResponseEntity<>(userService.getUsersByName(username), HttpStatus.OK);
         } else if(email != null){
-             return new ResponseEntity<>(userService.getUserByEmail(email), HttpStatus.OK);
+             return new ResponseEntity<>(userService.getUsersByEmail(email), HttpStatus.OK);
         }
 
         List<User> allUsers = userService.getAllUsers();

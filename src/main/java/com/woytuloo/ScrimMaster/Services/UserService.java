@@ -31,11 +31,11 @@ public class UserService {
     }
 
     public List<User> getUsersByName(String name) {
-        return userRepository.findAll().stream().filter(user -> user.getUsername().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
+        return userRepository.findByUsernameContainingIgnoreCase(name).stream().collect(Collectors.toList());
     }
 
-    public List<User> getUserByEmail(String email) {
-        return userRepository.findAll().stream().filter(user -> user.getEmail().toLowerCase().contains(email.toLowerCase())).collect(Collectors.toList());
+    public List<User> getUsersByEmail(String email) {
+        return userRepository.findByEmailContainingIgnoreCase(email).stream().collect(Collectors.toList());
     }
 
     public void deleteUserByUsername(String name) {
@@ -51,6 +51,7 @@ public class UserService {
     }
 
     public User addUser(User user) {
+
         if(userRepository.findByUsername(user.getUsername()).isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Użytkownik o takim nicku już istnieje");
         }
