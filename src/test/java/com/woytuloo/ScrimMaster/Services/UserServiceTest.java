@@ -223,4 +223,18 @@ class UserServiceTest {
         verify(userRepository, never()).findByUsername(any());
 
     }
+
+    @Test
+    void shallNotGetCurrentUser_AuthIsNull() {
+        Authentication auth = null;
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        given(securityContext.getAuthentication()).willReturn(auth);
+        SecurityContextHolder.setContext(securityContext);
+
+        underTest.getCurrentUser();
+        verify(userRepository, never()).findByUsername(any());
+
+    }
+
 }
