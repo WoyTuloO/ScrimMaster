@@ -9,12 +9,9 @@ public class DTOMappers {
                 .teamId(team.getTeamId())
                 .teamName(team.getTeamName())
                 .captain(mapToUserDTO(team.getCaptain()))
-                .player2(mapToUserDTO(team.getPlayer2()))
-                .player3(mapToUserDTO(team.getPlayer3()))
-                .player4(mapToUserDTO(team.getPlayer4()))
-                .player5(mapToUserDTO(team.getPlayer5()))
-                .player6(mapToUserDTO(team.getPlayer6()))
-                .player7(mapToUserDTO(team.getPlayer7()))
+                .players(team.getPlayers().stream()
+                        .map(DTOMappers::mapToUserDTO)
+                        .toList())
                 .teamRanking(team.getTeamRanking())
                 .build();
     }
