@@ -46,12 +46,7 @@ public class TeamService {
             Team workingTeam = optionalTeam.get();
             workingTeam.setTeamName(team.getTeamName());
             workingTeam.setCaptain(team.getCaptain());
-            workingTeam.setPlayer2(team.getPlayer2());
-            workingTeam.setPlayer3(team.getPlayer3());
-            workingTeam.setPlayer4(team.getPlayer4());
-            workingTeam.setPlayer5(team.getPlayer5());
-            workingTeam.setPlayer6(team.getPlayer6());
-            workingTeam.setPlayer7(team.getPlayer7());
+            workingTeam.setPlayers(team.getPlayers());
             workingTeam.setTeamRanking(team.getTeamRanking());
             return teamRepository.save(workingTeam);
         }
