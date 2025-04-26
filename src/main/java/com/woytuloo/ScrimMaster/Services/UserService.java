@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,11 +32,11 @@ public class UserService {
     }
 
     public List<User> getUsersByName(String name) {
-        return userRepository.findByUsernameContainingIgnoreCase(name).stream().collect(Collectors.toList());
+        return new ArrayList<>(userRepository.findByUsernameContainingIgnoreCase(name));
     }
 
     public List<User> getUsersByEmail(String email) {
-        return userRepository.findByEmailContainingIgnoreCase(email).stream().collect(Collectors.toList());
+        return new ArrayList<>(userRepository.findByEmailContainingIgnoreCase(email));
     }
 
     public void deleteUserByUsername(String name) {
