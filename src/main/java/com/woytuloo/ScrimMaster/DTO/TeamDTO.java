@@ -1,6 +1,6 @@
 package com.woytuloo.ScrimMaster.DTO;
 
-import com.woytuloo.ScrimMaster.Models.User;
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,12 +10,6 @@ public class TeamDTO {
     private Long teamId;
     private String teamName;
     private UserDTO captain;
-    private UserDTO player2;
-    private UserDTO player3;
-    private UserDTO player4;
-    private UserDTO player5;
-    private UserDTO player6;
-    private UserDTO player7;
+    private List<UserDTO> players;
     private Integer teamRanking = 0;
-
 }

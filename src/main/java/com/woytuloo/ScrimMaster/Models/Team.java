@@ -3,6 +3,9 @@ package com.woytuloo.ScrimMaster.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Entity
 public class Team {
@@ -19,29 +22,13 @@ public class Team {
     @JoinColumn(name = "captain_id", nullable = false)
     private User captain;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player2_id")
-    private User player2;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player3_id")
-    private User player3;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player4_id")
-    private User player4;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player5_id")
-    private User player5;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player6_id")
-    private User player6;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player7_id")
-    private User player7;
+    @ManyToMany
+    @JoinTable(
+            name = "team_players",
+            joinColumns = @JoinColumn(name = "team_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private List<User> players = new ArrayList<>();
 
     private Integer teamRanking = 0;
 
@@ -50,6 +37,6 @@ public class Team {
     public Team(String teamName, User captain) {
         this.teamName = teamName;
         this.captain = captain;
+        players.add(captain);
     }
-
 }

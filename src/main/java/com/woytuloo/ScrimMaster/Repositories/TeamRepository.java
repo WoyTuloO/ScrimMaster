@@ -10,4 +10,6 @@ public interface TeamRepository extends JpaRepository<Team, Long> {
     public void deleteById(long id);
     public Optional<Team> findByTeamName(String teamName);
     public Optional<Team> findById(long id);
+    public List<Team> findAllByCaptain_Username(String username);
+    public List<Team> findAllByPlayers_Username(String username);
 }
