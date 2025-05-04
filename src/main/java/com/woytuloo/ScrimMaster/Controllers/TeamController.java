@@ -34,7 +34,7 @@ public class TeamController {
                     .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
         }
         if (name != null) {
-            List<Team> teams = teamService.getTeamByName(name);
+            Optional<Team> teams = teamService.getTeamByName(name);
             if (teams.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

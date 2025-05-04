@@ -30,10 +30,8 @@ public class TeamService {
         return teamRepository.findById(id);
     }
 
-    public List<Team> getTeamByName(String name) {
-        return teamRepository.findAll().stream()
-                .filter(team -> team.getTeamName().toLowerCase().contains(name.toLowerCase()))
-                .collect(Collectors.toList());
+    public Optional<Team> getTeamByName(String name) {
+        return teamRepository.findByTeamName(name);
     }
 
     public void deleteTeam(Long id) {
