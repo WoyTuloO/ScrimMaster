@@ -3,6 +3,8 @@ package com.woytuloo.ScrimMaster.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Collection;
+
 @Data
 @Entity
 @Table(name = "users")

@@ -48,10 +48,10 @@ public class MatchService {
         if (matchOptional.isPresent()) {
             matchOptional.get().setTeam1Score(match.getTeam1Score());
             matchOptional.get().setTeam2Score(match.getTeam2Score());
-
+            matchRepository.save(match);
         }
 
-        matchRepository.save(match);
+
     }
 
 

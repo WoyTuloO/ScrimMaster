@@ -1,98 +1,75 @@
-import React, {createContext, useState, ReactNode, useEffect} from 'react';
-
-export interface User {
-    id: number;
-    username: string;
-    email: string;
-}
+import React, {
+    createContext,
+    useState,
+    useEffect,
+    ReactNode,
+    useCallback
+} from 'react';
 
 interface AuthContextType {
-    user: User | null;
     isAuthenticated: boolean;
     login: (username: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
-    setUser: (user: User | null) => void;
+    authFetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
-    user: null,
     isAuthenticated: false,
-    login: () => Promise.resolve(),
-    logout: () => Promise.resolve(),
-    setUser: () => {}
+    login: async () => {},
+    logout: async () => {},
+    authFetch: fetch
 });
 
-interface Props {
-    children: ReactNode;
-}
-
-export const AuthProvider: React.FC<Props> = ({ children }) => {
-    const [user, setUser] = useState<User | null>(null);
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [isAuthenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/user/currentUser', {
-            method: 'GET',
-            credentials: 'include'
-        })
-            .then(res => {
-                if (res.ok) {
-                    return res.json();
-                }
-                throw new Error('Brak aktywnej sesji');
-            })
-            .then((data: User) => {
-                setUser(data);
-            })
-            .catch(err => {
-                setUser(null);
-            });
+        authFetch('http://localhost:8080/api/auth/me')
+            .then(res => setAuthenticated(res.ok))
+            .catch(() => setAuthenticated(false));
     }, []);
 
-    const login = (username: string, password: string): Promise<void> => {
-        return fetch('http://localhost:8080/login', {
+    const login = async (username: string, password: string) => {
+        const res = await fetch('http://localhost:8080/api/auth/login', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ username, password }),
-            credentials: 'include'
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Niepoprawne dane logowania');
-                }
-                return response.text();
-            })
-            .then(() => {
-                return fetch('http://localhost:8080/api/user/currentUser', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-            })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Nie udało się pobrać danych użytkownika');
-                }
-                return res.json();
-            })
-            .then((data: User) => {
-                setUser(data);
-            });
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ username, password })
+        });
+        if (!res.ok) {
+            throw new Error('Niepoprawne dane logowania');
+        }
+        setAuthenticated(true);
     };
 
-    const logout = (): Promise<void> => {
-        return fetch('http://localhost:8080/logout', {
+    const logout = async () => {
+        await fetch('http://localhost:8080/api/auth/logout', {
             method: 'POST',
             credentials: 'include'
-        })
-            .then(() => {
-                setUser(null);
-            })
-            .catch(() => {
-                setUser(null);
-            });
+        });
+        setAuthenticated(false);
     };
+
+    const authFetch = useCallback(async (input: RequestInfo, init: RequestInit = {}) => {
+        init.credentials = 'include';
+        let res = await fetch(input, init);
+        if (res.status === 401) {
+            const r = await fetch('http://localhost:8080/api/auth/refresh', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (r.ok) {
+                res = await fetch(input, init);
+            } else {
+                setAuthenticated(false);
+                throw new Error('Sesja wygasła');
+            }
+        }
+        return res;
+    }, []);
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, logout, setUser }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, logout, authFetch }}>
             {children}
         </AuthContext.Provider>
     );

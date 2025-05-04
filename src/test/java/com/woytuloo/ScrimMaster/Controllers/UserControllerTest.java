@@ -28,18 +28,18 @@ class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-
-
     @Test
-    void getUsers() {
+    void getUsers() throws Exception {
+        String responseJson = mockMvc.perform(MockMvcRequestBuilders.get("/api/user"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+
 
     }
 
-    @Test
-    void getCurrentUser() {
-
-
-    }
 
     @Test
     void addUser() throws Exception {

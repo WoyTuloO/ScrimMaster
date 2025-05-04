@@ -23,13 +23,11 @@ function Register() {
         _event: React.SyntheticEvent | Event,
         reason: string
     ) => {
-        if (reason === 'clickaway') {
-            return;
-        }
+        if (reason === 'clickaway') return;
         setSnackbar(prev => ({ ...prev, open: false }));
     };
 
-    const handleRegisterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const username = formData.get('username') as string;
@@ -57,44 +55,40 @@ function Register() {
             persmissionLevel: 0
         };
 
-        fetch("http://localhost:8080/api/user", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(payload)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    return response.clone().json().then(errorData => {
-                        throw new Error(errorData.message || "Błąd podczas rejestracji");
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("Rejestracja przebiegła pomyślnie:", data);
-                setSnackbar({
-                    open: true,
-                    message: "Rejestracja przebiegła pomyślnie. Przekierowywanie...",
-                    severity: "success"
-                });
-                setTimeout(() => {
-                    navigate('/login');
-                }, 1500);
-            })
-            .catch(error => {
-                console.error("Wystąpił błąd:", error.message);
-                setSnackbar({
-                    open: true,
-                    message: error.message,
-                    severity: "error"
-                });
+        try {
+            const response = await fetch("http://localhost:8080/api/user", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
             });
 
+            if (!response.ok) {
+                let errMsg = "Błąd podczas rejestracji";
+                try {
+                    const errData = await response.json();
+                    errMsg = errData.message || errMsg;
+                } catch {
+                }
+                throw new Error(errMsg);
+            }
+
+            setSnackbar({
+                open: true,
+                message: "Rejestracja przebiegła pomyślnie. Przekierowywanie...",
+                severity: "success"
+            });
+            setTimeout(() => navigate('/login'), 1500);
+
+        } catch (error: any) {
+            console.error("Wystąpił błąd:", error.message);
+            setSnackbar({
+                open: true,
+                message: error.message,
+                severity: "error"
+            });
+        }
     };
 
-    // @ts-ignore
     return (
         <Box
             sx={{
@@ -115,43 +109,14 @@ function Register() {
         >
             <Container maxWidth="xs">
                 <Paper elevation={4} sx={{ padding: 2, mt: { xs: 0, md: 10 } }}>
-                    <Typography variant="h5" sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>Register</Typography>
+                    <Typography variant="h5" sx={{ textAlign: "center", fontFamily: 'Montserrat' }}>
+                        Register
+                    </Typography>
                     <Box component="form" onSubmit={handleRegisterSubmit} sx={{ mt: 1 }}>
-                        <TextField
-                            name="username"
-                            variant="outlined"
-                            label="Username"
-                            required
-                            fullWidth
-                            sx={{ fontFamily: 'Montserrat' }}
-                        />
-                        <TextField
-                            name="password"
-                            variant="outlined"
-                            label="Password"
-                            type="password"
-                            required
-                            fullWidth
-                            sx={{ mt: 2, fontFamily: 'Montserrat' }}
-                        />
-                        <TextField
-                            name="repeatPassword"
-                            variant="outlined"
-                            label="Repeat password"
-                            type="password"
-                            required
-                            fullWidth
-                            sx={{ mt: 2, fontFamily: 'Montserrat' }}
-                        />
-                        <TextField
-                            name="email"
-                            variant="outlined"
-                            label="Email"
-                            type="email"
-                            required
-                            fullWidth
-                            sx={{ mt: 2, fontFamily: 'Montserrat' }}
-                        />
+                        <TextField name="username" label="Username" required fullWidth sx={{ fontFamily: 'Montserrat' }} />
+                        <TextField name="password" label="Password" type="password" required fullWidth sx={{ mt: 2, fontFamily: 'Montserrat' }} />
+                        <TextField name="repeatPassword" label="Repeat password" type="password" required fullWidth sx={{ mt: 2, fontFamily: 'Montserrat' }} />
+                        <TextField name="email" label="Email" type="email" required fullWidth sx={{ mt: 2, fontFamily: 'Montserrat' }} />
                         <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, fontFamily: 'Montserrat' }}>
                             Sign Up
                         </Button>
@@ -168,9 +133,10 @@ function Register() {
                     autoHideDuration={3000}
                     onClose={handleCloseSnackbar}
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                    sx={{mt:10}}
+                    TransitionComponent={SlideTransition}
+                    sx={{ mt: 10 }}
                 >
-                    <Alert onClose={handleCloseSnackbar} variant={"filled"} severity={snackbar.severity} sx={{ width: '100%' }}>
+                    <Alert onClose={handleCloseSnackbar} variant="filled" severity={snackbar.severity} sx={{ width: '100%' }}>
                         {snackbar.message}
                     </Alert>
                 </Snackbar>
