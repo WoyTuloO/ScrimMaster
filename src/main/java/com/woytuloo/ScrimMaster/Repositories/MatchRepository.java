@@ -30,4 +30,5 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
         WHERE p.username = :username
     """)
     public List<Match> findByUserName(String username);
+
 }

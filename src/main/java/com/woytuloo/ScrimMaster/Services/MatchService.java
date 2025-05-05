@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class MatchService {
-    private MatchRepository matchRepository;
+    private final MatchRepository matchRepository;
 
     @Autowired
     public MatchService(MatchRepository matchRepository) {
@@ -23,8 +23,8 @@ public class MatchService {
         return matchRepository.findAll();
     }
 
-    public List<Match> getMatchById(long id) {
-        return matchRepository.findAll().stream().filter(m -> m.getId() == id).collect(Collectors.toList());
+    public Optional<Match> getMatchById(long id) {
+        return matchRepository.findById(id);
     }
 
     public List<Match> getTeamMatches(long teamId){

@@ -4,7 +4,16 @@ import com.woytuloo.ScrimMaster.DTO.DTOMappers;
 import com.woytuloo.ScrimMaster.DTO.TeamDTO;
 import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Services.TeamService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +33,19 @@ public class TeamController {
         this.teamService = teamService;
     }
 
+    @Operation(
+            summary = "Pobranie zespołów",
+            description = "Zwraca listę zespołów lub pojedynczy zespół. Filtrowanie po `teamId` lub `name`.",
+            parameters = {
+                    @Parameter(name = "teamId", in = ParameterIn.QUERY, example = "10"),
+                    @Parameter(name = "name",   in = ParameterIn.QUERY, example = "Avengers")
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Zespół / lista zespołów",
+                            content = @Content(array = @ArraySchema(schema = @Schema(implementation = TeamDTO.class)))),
+                    @ApiResponse(responseCode = "404", description = "Nie znaleziono")
+            }
+    )
     @GetMapping
     public ResponseEntity<?> getTeams(
             @RequestParam(required = false) Long teamId,
@@ -51,12 +73,36 @@ public class TeamController {
         return new ResponseEntity<>(teamDTOs, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Utwórz zespół",
+            description = "Dodaje nowy zespół i zwraca go z nadanym ID.",
+            requestBody = @RequestBody(
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = Team.class))
+            ),
+            responses = @ApiResponse(responseCode = "201",
+                    description = "Zespół utworzony",
+                    content = @Content(schema = @Schema(implementation = Team.class)))
+    )
     @PostMapping
     public ResponseEntity<Team> addTeam(@RequestBody Team team) {
         Team savedTeam = teamService.addTeam(team);
         return new ResponseEntity<>(savedTeam, HttpStatus.CREATED);
     }
 
+
+    @Operation(
+            summary = "Aktualizuj zespół",
+            description = "Modyfikuje dane istniejącego zespołu.",
+            requestBody = @RequestBody(
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = Team.class))
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Zaktualizowano"),
+                    @ApiResponse(responseCode = "404", description = "Nie znaleziono")
+            }
+    )
     @PutMapping
     public ResponseEntity<Team> updateTeam(@RequestBody Team team) {
         Team updatedTeam = teamService.updateTeam(team);
@@ -66,6 +112,13 @@ public class TeamController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+
+    @Operation(
+            summary = "Usuń zespół",
+            description = "Trwale usuwa zespół o wskazanym ID.",
+            parameters = @Parameter(name = "id", in = ParameterIn.PATH, example = "10"),
+            responses = @ApiResponse(responseCode = "200", description = "Usunięto")
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTeam(@PathVariable Long id) {
         teamService.deleteTeam(id);

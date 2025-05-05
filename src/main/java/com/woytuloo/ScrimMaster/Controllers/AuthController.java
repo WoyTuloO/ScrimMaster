@@ -5,6 +5,16 @@ import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Repositories.UserRepository;
 import com.woytuloo.ScrimMaster.Security.JwtUtils;
 import com.woytuloo.ScrimMaster.Services.RefreshTokenService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +45,34 @@ public class AuthController {
         this.userRepo = userRepo;
     }
 
+    @Schema(description = "Dane logowania")
+    public record LoginRequest(
+            @Schema(description = "Nazwa użytkownika", example = "demo")    String username,
+            @Schema(description = "Hasło użytkownika",  example = "secret") String password
+    ) {}
+
+    @Operation(
+            summary = "Logowanie i wydanie pary tokenów",
+            description = "Przyjmuje nazwę użytkownika i hasło, weryfikuje je i zwraca parę (access + refresh) "
+                    + "w httpOnly cookies. Access token jest w formacie JWT z rolami, refresh trafia do bazy.",
+            requestBody = @RequestBody(
+                    required = true,
+                    description = "Dane logowania (username + password)",
+                    content = @Content(
+                            schema = @Schema(implementation = LoginRequest.class),
+                            examples = @ExampleObject(
+                                    name = "Przykład",
+                                    value = """
+                        { "username": "demo", "password": "secret" }
+                        """
+                            )
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Zalogowano – tokeny w cookies"),
+                    @ApiResponse(responseCode = "401", description = "Błędne dane uwierzytelniające")
+            }
+    )
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody User creds, HttpServletResponse res) {
 
@@ -55,6 +93,17 @@ public class AuthController {
         return ResponseEntity.ok("Zalogowano");
     }
 
+    @Operation(
+            summary = "Odśwież access token",
+            description = "Przyjmuje refresh token z cookie, sprawdza jego ważność i generuje nowy access token "
+                    + "bez zmiany refresha. Nowy access trafia do httpOnly cookie.",
+            parameters = @Parameter(name = "refreshToken", in = ParameterIn.COOKIE,
+                    required = true, description = "Refresh token"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Nowy access token wygenerowany"),
+                    @ApiResponse(responseCode = "401", description = "Refresh token nieprawidłowy lub wygasł")
+            }
+    )
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@CookieValue("refreshToken") String rt,
                                           HttpServletResponse res) {
@@ -71,11 +120,30 @@ public class AuthController {
         return ResponseEntity.ok("Token odświeżony");
     }
 
+    @Operation(
+            summary = "Informacja o bieżącym zalogowanym użytkowniku",
+            description = "Zwraca nazwę zalogowanego użytkownika na podstawie informacji z JWT w nagłówku Authorization.",
+            security = @SecurityRequirement(name = "bearer-jwt"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Nazwa użytkownika",
+                            content = @Content(schema = @Schema(implementation = String.class))),
+                    @ApiResponse(responseCode = "401", description = "Brak autoryzacji")
+            }
+    )
     @GetMapping("/me")
     public ResponseEntity<String> me(Authentication auth) {
         return ResponseEntity.ok(auth.getName());
     }
 
+    @Operation(
+            summary = "Wylogowanie (kasuje tokeny i cookie)",
+            security = @SecurityRequirement(name = "bearer-jwt"),
+            parameters = @Parameter(name = "refreshToken", in = ParameterIn.COOKIE,
+                    required = false, description = "Opcjonalny refresh token"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Wylogowano pomyślnie")
+            }
+    )
     @PostMapping("/logout")
     public ResponseEntity<?> logout(
             @CookieValue(name = "refreshToken", required = false) String rt,
