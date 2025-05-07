@@ -1,19 +1,25 @@
-import * as React from 'react';
+import React, { useContext } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from './AuthContext';
-import {JSX} from "react";
 
 interface ProtectedRouteProps {
-    children: JSX.Element;
+    children: React.ReactElement;
+    requiredRole?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-    const { isAuthenticated } = React.useContext(AuthContext);
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requiredRole }) => {
+    const { isAuthenticated, user, loading } = useContext(AuthContext);
+
+    if(loading){
+        return null;
+    }
 
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
-
+    if (requiredRole && user?.role !== requiredRole) {
+        return <Navigate to="/" replace />;
+    }
     return children;
 };
 

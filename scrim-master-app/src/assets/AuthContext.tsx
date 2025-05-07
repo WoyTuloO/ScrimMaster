@@ -6,28 +6,68 @@ import React, {
     useCallback
 } from 'react';
 
+interface User { id: number; username: string; email: string; kd: number; adr: number; ranking: number; role: string; }
+
 interface AuthContextType {
+    user: User | null;
     isAuthenticated: boolean;
+    loading: boolean;
     login: (username: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     authFetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
+    user: null,
     isAuthenticated: false,
+    loading: true,
     login: async () => {},
     logout: async () => {},
     authFetch: fetch
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [isAuthenticated, setAuthenticated] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const navigateOnUnauth = useCallback(() => {/* opcjonalnie: navigate('/login') */}, []);
+
+    const authFetch = useCallback(async (input: RequestInfo, init: RequestInit = {}) => {
+        init.credentials = 'include';
+        let res = await fetch(input, init);
+        if (res.status === 401) {
+            const refresh = await fetch('http://localhost:8080/api/auth/refresh', { method: 'POST', credentials: 'include' });
+            if (refresh.ok) {
+                res = await fetch(input, init);
+            } else {
+                setUser(null);
+                setLoading(false);
+                navigateOnUnauth();
+                throw new Error('Sesja wygasła');
+            }
+        }
+        return res;
+    }, [navigateOnUnauth]);
+
+    const fetchCurrentUser = useCallback(async () => {
+        try {
+            setLoading(true);
+            const res = await authFetch('http://localhost:8080/api/user/currentUser');
+            if (res.ok) {
+                const data: User = await res.json();
+                setUser(data);
+            } else {
+                setUser(null);
+            }
+        } catch {
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    }, [authFetch]);
 
     useEffect(() => {
-        authFetch('http://localhost:8080/api/auth/me')
-            .then(res => setAuthenticated(res.ok))
-            .catch(() => setAuthenticated(false));
-    }, []);
+        fetchCurrentUser();
+    }, [fetchCurrentUser]);
 
     const login = async (username: string, password: string) => {
         const res = await fetch('http://localhost:8080/api/auth/login', {
@@ -39,37 +79,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (!res.ok) {
             throw new Error('Niepoprawne dane logowania');
         }
-        setAuthenticated(true);
+        await fetchCurrentUser();
     };
 
     const logout = async () => {
-        await fetch('http://localhost:8080/api/auth/logout', {
-            method: 'POST',
-            credentials: 'include'
-        });
-        setAuthenticated(false);
+        await fetch('http://localhost:8080/api/auth/logout', { method: 'POST', credentials: 'include' });
+        setUser(null);
     };
 
-    const authFetch = useCallback(async (input: RequestInfo, init: RequestInit = {}) => {
-        init.credentials = 'include';
-        let res = await fetch(input, init);
-        if (res.status === 401) {
-            const r = await fetch('http://localhost:8080/api/auth/refresh', {
-                method: 'POST',
-                credentials: 'include'
-            });
-            if (r.ok) {
-                res = await fetch(input, init);
-            } else {
-                setAuthenticated(false);
-                throw new Error('Sesja wygasła');
-            }
-        }
-        return res;
-    }, []);
+    const isAuthenticated = !!user;
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, authFetch }}>
+        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, authFetch , loading }}>
             {children}
         </AuthContext.Provider>
     );

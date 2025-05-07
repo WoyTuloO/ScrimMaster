@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.parameters.*;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +115,8 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = User.class)))
     )
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user){
+    public ResponseEntity<User> addUser(@org.springframework.web.bind.annotation.RequestBody User user){
+        System.out.println(user.toString());
         User createdUser = userService.addUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
@@ -132,7 +134,7 @@ public class UserController {
             }
     )
     @PutMapping("")
-    public ResponseEntity<User> updateUser(@RequestBody User user){
+    public ResponseEntity<User> updateUser(@org.springframework.web.bind.annotation.RequestBody User user){
         User toUpdateUser = userService.updateUser(user);
         if (toUpdateUser != null) {
             return new ResponseEntity<>(toUpdateUser, HttpStatus.OK);

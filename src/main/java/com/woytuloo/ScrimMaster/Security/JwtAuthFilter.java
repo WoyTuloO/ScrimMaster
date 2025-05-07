@@ -33,7 +33,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // 1) Wyciągamy accessToken z ciasteczek
         String token = null;
         if (request.getCookies() != null) {
             token = Arrays.stream(request.getCookies())
@@ -43,16 +42,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .orElse(null);
         }
 
-        // 2) Jeśli jest i przejdzie walidację, parsujemy Claims
         if (token != null && jwtUtils.validate(token)) {
             try {
-                Claims claims = jwtUtils.parseClaims(token);      // używamy Twojej metody
-                String username = claims.getSubject();            // getSubject()
+                Claims claims = jwtUtils.parseClaims(token);
+                String username = claims.getSubject();
                 @SuppressWarnings("unchecked")
                 List<String> roles = claims.get("roles", List.class);
 
                 var authorities = roles.stream()
-                        .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
                 var auth = new UsernamePasswordAuthenticationToken(
@@ -62,8 +60,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception ex) {
-                // jeśli parsowanie/walidacja tokenu się nie powiodła,
-                // zostawiamy kontekst niewypełniony => dalej 401/403
             }
         }
 

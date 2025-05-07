@@ -13,5 +13,5 @@ public class UserDTO {
     private double kd;
     private double adr;
     private int ranking;
-
+    private String role;
 }
