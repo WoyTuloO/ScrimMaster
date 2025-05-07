@@ -69,7 +69,7 @@ public class UserService {
         if (oldUser.isPresent()) {
             User workingUser = oldUser.get();
             workingUser.setPassword(user.getPassword());
-            workingUser.setPersmissionLevel(user.getPersmissionLevel());
+            workingUser.setRole(user.getRole());
             workingUser.setAdr(user.getAdr());
             workingUser.setKd(user.getKd());
             workingUser.setRanking(user.getRanking());

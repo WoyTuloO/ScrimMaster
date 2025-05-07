@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -26,13 +28,17 @@ public class User {
     private double kd;
     private double adr;
     private int ranking;
-    private Integer persmissionLevel = 0;
+
+    private String role = "ROLE_USER";
 
     public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
         this.email = email;
+
     }
+
+
 
     public User() { }
 
