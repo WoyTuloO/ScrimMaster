@@ -1,6 +1,9 @@
 package com.woytuloo.ScrimMaster.Controllers;
 
 
+import com.woytuloo.ScrimMaster.DTO.DTOMappers;
+import com.woytuloo.ScrimMaster.DTO.MatchDTO;
+import com.woytuloo.ScrimMaster.DTO.MatchRequest;
 import com.woytuloo.ScrimMaster.Models.Match;
 import com.woytuloo.ScrimMaster.Services.MatchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,8 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/match")
 public class MatchController {
@@ -59,6 +64,26 @@ public class MatchController {
         return new ResponseEntity<>(match.get(), HttpStatus.OK);
     }
 
+    @GetMapping("/me")
+    @Operation(
+            summary = "Mecze użytkownika",
+            description = "Lista meczów, w których uczestniczy aktualnie zalogowany użytkownik.",
+            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
+    )
+    public ResponseEntity<List<MatchDTO>> getUserMatches() {
+        try {
+            List<Match> matches = matchService.getUserMatches();
+            List<MatchDTO> dtos = matches.stream()
+                    .map(DTOMappers::mapToMatchDTO)
+                    .collect(Collectors.toList());
+            return new ResponseEntity<>(dtos, HttpStatus.OK);
+        }catch(RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+
     @Operation(
             summary = "Mecze danego zespołu",
             description = "Lista meczów, w których uczestniczy wskazany zespół.",
@@ -77,15 +102,15 @@ public class MatchController {
             description = "Tworzy nowy mecz między dwoma zespołami.",
             requestBody = @RequestBody(
                     required = true,
-                    content = @Content(schema = @Schema(implementation = Match.class))
+                    content = @Content(schema = @Schema(implementation = MatchRequest.class))
             ),
             responses = @ApiResponse(responseCode = "201", description = "Utworzono",
-                    content = @Content(schema = @Schema(implementation = Match.class)))
+                    content = @Content(schema = @Schema(implementation = MatchRequest.class)))
     )
-    @PostMapping()
-    public ResponseEntity<Match> addMatch(Match match) {
-        Match match1 = matchService.addMatch(match);
-        return new ResponseEntity<>(match1, HttpStatus.CREATED);
+    @PostMapping
+    public ResponseEntity<MatchDTO> addMatch(@org.springframework.web.bind.annotation.RequestBody MatchRequest req) {
+        MatchDTO created = matchService.createMatch(req);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @Operation(
@@ -106,14 +131,17 @@ public class MatchController {
             description = "Aktualizuje datę, wynik lub przypisane zespoły istniejącego meczu.",
             requestBody = @RequestBody(
                     required = true,
-                    content = @Content(schema = @Schema(implementation = Match.class))
+                    content = @Content(schema = @Schema(implementation = MatchRequest.class))
             ),
             responses = @ApiResponse(responseCode = "200", description = "Zaktualizowano")
     )
     @PutMapping
-    public ResponseEntity<Match> updateMatch(@RequestBody Match match) {
-        matchService.updateMatch(match);
-        return new ResponseEntity<>(match, HttpStatus.OK);
+    public ResponseEntity<MatchDTO> updateMatch(@org.springframework.web.bind.annotation.RequestBody MatchRequest req) {
+        MatchDTO updated = matchService.updateMatch(req);
+        if (updated == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(updated);
     }
 
 
