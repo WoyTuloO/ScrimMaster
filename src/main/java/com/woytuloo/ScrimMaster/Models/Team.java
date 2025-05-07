@@ -39,4 +39,12 @@ public class Team {
         this.captain = captain;
         players.add(captain);
     }
+
+    public void addPlayer(User player) {
+        players.add(player);
+    }
+
+    public void removePlayer(User player) {
+        players.remove(player);
+    }
 }
