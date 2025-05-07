@@ -2,6 +2,7 @@ package com.woytuloo.ScrimMaster.Controllers;
 
 import com.woytuloo.ScrimMaster.DTO.DTOMappers;
 import com.woytuloo.ScrimMaster.DTO.TeamDTO;
+import com.woytuloo.ScrimMaster.DTO.TeamRequest;
 import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Services.TeamService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -78,16 +79,16 @@ public class TeamController {
             description = "Dodaje nowy zespół i zwraca go z nadanym ID.",
             requestBody = @RequestBody(
                     required = true,
-                    content = @Content(schema = @Schema(implementation = Team.class))
+                    content = @Content(schema = @Schema(implementation = TeamRequest.class))
             ),
             responses = @ApiResponse(responseCode = "201",
                     description = "Zespół utworzony",
-                    content = @Content(schema = @Schema(implementation = Team.class)))
+                    content = @Content(schema = @Schema(implementation = TeamRequest.class)))
     )
     @PostMapping
-    public ResponseEntity<Team> addTeam(@RequestBody Team team) {
-        Team savedTeam = teamService.addTeam(team);
-        return new ResponseEntity<>(savedTeam, HttpStatus.CREATED);
+    public ResponseEntity<TeamDTO> addTeam(@org.springframework.web.bind.annotation.RequestBody TeamRequest req) {
+        TeamDTO created = teamService.createTeam(req);
+        return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
 
@@ -96,7 +97,7 @@ public class TeamController {
             description = "Modyfikuje dane istniejącego zespołu.",
             requestBody = @RequestBody(
                     required = true,
-                    content = @Content(schema = @Schema(implementation = Team.class))
+                    content = @Content(schema = @Schema(implementation = TeamRequest.class))
             ),
             responses = {
                     @ApiResponse(responseCode = "200", description = "Zaktualizowano"),
@@ -104,12 +105,12 @@ public class TeamController {
             }
     )
     @PutMapping
-    public ResponseEntity<Team> updateTeam(@RequestBody Team team) {
-        Team updatedTeam = teamService.updateTeam(team);
-        if (updatedTeam != null) {
-            return new ResponseEntity<>(updatedTeam, HttpStatus.OK);
+    public ResponseEntity<TeamDTO> updateTeam(@org.springframework.web.bind.annotation.RequestBody TeamRequest req) {
+        TeamDTO updated = teamService.updateTeam(req);
+        if (updated == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(updated);
     }
 
 
