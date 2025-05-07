@@ -12,7 +12,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import PersonIcon from '@mui/icons-material/Person';
-import { Link as RouterLink } from 'react-router-dom';
+import {Link as RouterLink, useNavigate} from 'react-router-dom';
 import { AuthContext } from './AuthContext';
 import GamepadIcon from '@mui/icons-material/Gamepad';
 
@@ -21,6 +21,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar: React.FC = () => {
     const { isAuthenticated, logout } = React.useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -43,6 +44,9 @@ const ResponsiveAppBar: React.FC = () => {
     const handleSettingClick = (setting: string) => {
         if (setting === 'Logout') {
             logout();
+        }
+        if(setting === 'Profile'){
+            navigate('/profile');
         }
         handleCloseUserMenu();
     };
@@ -191,4 +195,10 @@ const ResponsiveAppBar: React.FC = () => {
     );
 };
 
+
+
+
+
 export default ResponsiveAppBar;
+
+
