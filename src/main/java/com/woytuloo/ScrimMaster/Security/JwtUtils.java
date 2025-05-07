@@ -29,7 +29,6 @@ public class JwtUtils {
 
     @PostConstruct
     public void init() {
-        // Inicjalizujemy klucz HMAC-SHA256 raz po wczytaniu sekretu
         this.signingKey = Keys.hmacShaKeyFor(jwtSecret.getBytes());
     }
 
@@ -52,10 +51,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    /**
-     * Parsuje token i zwraca jego Claims (zawartość).
-     * Rzuci wyjątek JwtException, jeśli token jest nieważny.
-     */
+
     public Claims parseClaims(String token) throws JwtException {
         return Jwts.parserBuilder()
                 .setSigningKey(signingKey)
@@ -64,9 +60,6 @@ public class JwtUtils {
                 .getBody();
     }
 
-    /**
-     * Sprawdza, czy token jest syntaktycznie poprawny i nie wygasł.
-     */
     public boolean validate(String token) {
         try {
             parseClaims(token);
@@ -76,12 +69,10 @@ public class JwtUtils {
         }
     }
 
-    /** @return TTL access tokenu w milisekundach */
     public long getAccessExpirationMs() {
         return accessExpirationMs;
     }
 
-    /** @return TTL refresh tokenu w milisekundach */
     public long getRefreshExpirationMs() {
         return refreshExpirationMs;
     }

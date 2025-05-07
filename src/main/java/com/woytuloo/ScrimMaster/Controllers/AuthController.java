@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -74,7 +74,7 @@ public class AuthController {
             }
     )
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User creds, HttpServletResponse res) {
+    public ResponseEntity<?> login(@org.springframework.web.bind.annotation.RequestBody User creds, HttpServletResponse res) {
 
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(creds.getUsername(), creds.getPassword()));
@@ -82,7 +82,7 @@ public class AuthController {
 
         User user = userRepo.findByUsername(creds.getUsername())
                 .orElseThrow(() -> new RuntimeException("Użytkownik nie istnieje"));
-        List<String> roles = List.of(user.getPersmissionLevel() == 1 ? "ADMIN" : "USER");
+        List<String> roles = List.of(user.getRole());
 
         String access = jwtUtils.generateAccessToken(user.getUsername(), roles);
         RefreshToken refresh = refreshSvc.createRefreshToken(user);
@@ -113,7 +113,7 @@ public class AuthController {
                         .orElseThrow(() -> new RuntimeException("Brak refresh tokena")));
 
         User user = stored.getUser();
-        List<String> roles = List.of(user.getPersmissionLevel() == 1 ? "ADMIN" : "USER");
+        List<String> roles = List.of(user.getRole());
         String newAccess = jwtUtils.generateAccessToken(user.getUsername(), roles);
 
         res.addHeader("Set-Cookie", buildAccessCookie(newAccess).toString());
