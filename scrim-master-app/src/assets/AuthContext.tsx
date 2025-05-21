@@ -1,14 +1,24 @@
 import React, {
     createContext,
+    useContext,
     useState,
     useEffect,
     ReactNode,
     useCallback
 } from 'react';
 
-interface User { id: number; username: string; email: string; kd: number; adr: number; ranking: number; role: string; }
+interface User {
+    id: number;
+    username: string;
+    email: string;
+    kd: number;
+    adr: number;
+    ranking: number;
+    role: string;
+}
 
 interface AuthContextType {
+    username: string;
     user: User | null;
     isAuthenticated: boolean;
     loading: boolean;
@@ -18,6 +28,7 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType>({
+    username: '',
     user: null,
     isAuthenticated: false,
     loading: true,
@@ -26,10 +37,16 @@ export const AuthContext = createContext<AuthContextType>({
     authFetch: fetch
 });
 
+export const useAuth = (): AuthContextType => {
+    return useContext(AuthContext);
+};
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const navigateOnUnauth = useCallback(() => {/* opcjonalnie: navigate('/login') */}, []);
+    const navigateOnUnauth = useCallback(() => {
+
+    }, []);
 
     const authFetch = useCallback(async (input: RequestInfo, init: RequestInit = {}) => {
         init.credentials = 'include';
@@ -90,7 +107,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const isAuthenticated = !!user;
 
     return (
-        <AuthContext.Provider value={{ user, isAuthenticated, login, logout, authFetch , loading }}>
+        <AuthContext.Provider value={{
+            username: user?.username ?? '',
+            user,
+            isAuthenticated,
+            loading,
+            login,
+            logout,
+            authFetch
+        }}>
             {children}
         </AuthContext.Provider>
     );
