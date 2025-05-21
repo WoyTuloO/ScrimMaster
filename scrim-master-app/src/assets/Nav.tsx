@@ -20,7 +20,7 @@ const pages = ['Teams', 'Scrims', 'Players'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar: React.FC = () => {
-    const { isAuthenticated, logout } = React.useContext(AuthContext);
+    const { isAuthenticated, logout, user } = React.useContext(AuthContext);
     const navigate = useNavigate();
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -47,6 +47,12 @@ const ResponsiveAppBar: React.FC = () => {
         }
         if(setting === 'Profile'){
             navigate('/profile');
+        }
+        if(setting ==='Admin'){
+            navigate('/admin');
+        }
+        if(setting ==='Dashboard'){
+            navigate('/dashboard');
         }
         handleCloseUserMenu();
     };
@@ -91,7 +97,15 @@ const ResponsiveAppBar: React.FC = () => {
                         >
                             {pages.map((page) => (
                                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography textAlign="center" sx={{color: 'inherit'}}>{page}</Typography>
+                                    <Button
+                                        key={page}
+                                        component={RouterLink}
+                                        to={`/${page.toLowerCase()}`}
+                                        onClick={handleCloseNavMenu}
+                                        sx={{ my: 2, color: 'black', display: 'block', fontWeight: 700,fontFamily: 'Montserrat', ":hover" : {} , textAlign: 'center'}}
+                                    >
+                                        {page}
+                                    </Button>
                                 </MenuItem>
                             ))}
 
@@ -114,6 +128,10 @@ const ResponsiveAppBar: React.FC = () => {
                                         <Typography textAlign="center">Register</Typography>
                                     </MenuItem>
                                 ]
+
+
+
+
                             }
 
                         </Menu>
@@ -176,6 +194,12 @@ const ResponsiveAppBar: React.FC = () => {
                                             <Typography textAlign="center" sx={{fontFamily: 'Montserrat'}}>{setting}</Typography>
                                         </MenuItem>
                                     ))}
+
+                                    {user !== null && user.role==='ROLE_ADMIN' && [
+                                        <MenuItem key={"Admin"} onClick={() => handleSettingClick("Admin")}>
+                                            <Typography textAlign="center" sx={{fontFamily: 'Montserrat'}}>Admin Panel</Typography>
+                                        </MenuItem>
+                                    ]}
                                 </Menu>
                             </>
                         ) : (
