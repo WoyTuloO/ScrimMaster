@@ -1,4 +1,3 @@
-// src/components/PrivateChat.tsx
 import React, { useEffect, useRef, useState } from "react";
 import { Client, IMessage } from "@stomp/stompjs";
 import { connectStomp } from "./wsClient";
@@ -13,7 +12,7 @@ import {
     Typography,
     CircularProgress,
 } from "@mui/material";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../assets/AuthContext";
 
 interface ChatMessage {
@@ -26,6 +25,7 @@ export default function PrivateChat() {
     const { username } = useAuth();
     const { recipient } = useParams<{ recipient: string }>();
     const location = useLocation();
+    const navigate = useNavigate();
     const other = (location.state as any)?.other ?? "nieznany";
 
     if (!recipient) {
@@ -56,14 +56,10 @@ export default function PrivateChat() {
                     setMsgs(data);
                     setError(null);
                 }
-            } catch (e) {
-                if (!cancelled) {
-                    setError("Nie udało się załadować historii");
-                }
+            } catch {
+                if (!cancelled) setError("Nie udało się załadować historii");
             } finally {
-                if (!cancelled) {
-                    setLoading(false);
-                }
+                if (!cancelled) setLoading(false);
             }
         }
         loadHistory();
@@ -82,9 +78,7 @@ export default function PrivateChat() {
                 }
             );
         });
-        client.onStompError = () => {
-            setError("Błąd połączenia STOMP");
-        };
+        client.onStompError = () => setError("Błąd połączenia STOMP");
         clientRef.current = client;
         return () => void client.deactivate();
     }, [recipient]);
@@ -98,10 +92,26 @@ export default function PrivateChat() {
         setTxt("");
     };
 
-    return (
-        <Box sx={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" , background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/../../public/img1.jpg)`}}>
+    const goToMatchCreate = () => {
+        navigate(`/match/create/${recipient}`, { state: { other } });
+    };
 
-        <Container sx={{ height: "70vh" }}>
+    return (
+        <Box
+            sx={{
+                opacity: 0,
+                animation: "fadeIn 1s forwards",
+                "@keyframes fadeIn": { from: { opacity: 0 }, to: { opacity: 1 } },
+                height: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: `linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(/../../public/img1.jpg)`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+            }}
+        >
+            <Container sx={{ height: "70vh" }}>
                 <Paper
                     elevation={4}
                     sx={{
@@ -142,7 +152,7 @@ export default function PrivateChat() {
                         </List>
                     )}
 
-                    <Box sx={{ display: "flex", gap: 1}}>
+                    <Box sx={{ display: "flex", gap: 1 }}>
                         <TextField
                             fullWidth
                             value={txt}
@@ -150,9 +160,13 @@ export default function PrivateChat() {
                             onKeyDown={(e) => e.key === "Enter" && send()}
                             placeholder="Napisz wiadomość…"
                         />
-                        <Button variant="contained" onClick={send}>Wyślij</Button>
+                        <Button variant="contained" onClick={send}>
+                            Wyślij
+                        </Button>
+                        <Button variant="outlined" onClick={goToMatchCreate}>
+                            Dodaj mecz
+                        </Button>
                     </Box>
-
                 </Paper>
             </Container>
         </Box>

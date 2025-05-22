@@ -1,8 +1,8 @@
 package com.woytuloo.ScrimMaster.DTO;
 
-import com.woytuloo.ScrimMaster.Models.Match;
-import com.woytuloo.ScrimMaster.Models.Team;
-import com.woytuloo.ScrimMaster.Models.User;
+import com.woytuloo.ScrimMaster.Models.*;
+
+import java.util.stream.Collectors;
 
 public class DTOMappers {
     public static TeamDTO mapToTeamDTO(Team team){
@@ -40,5 +40,29 @@ public class DTOMappers {
                 .build();
     }
 
+
+    public static MatchProposalDTO toDTO(MatchProposal p) {
+        MatchProposalDTO d = new MatchProposalDTO();
+        d.setId(p.getId());
+        d.setTeam1Id(p.getTeam1().getTeamId());
+        d.setTeam2Id(p.getTeam2().getTeamId());
+        d.setStatus(p.getStatus().name());
+        return d;
+    }
+
+    public static MatchRequestDTO toRequestDTO(MatchSubmission s) {
+        MatchRequestDTO r = new MatchRequestDTO();
+        r.setTeamId(s.getTeam().getTeamId());
+        r.setFinalScore(s.getFinalScore());
+        r.setOpponentScore(s.getOpponentScore());
+        r.setStats(s.getStats().stream().map(ps -> {
+            PlayerStatDTO psd = new PlayerStatDTO();
+            psd.setPlayerId(ps.getPlayer().getId());
+            psd.setKd(ps.getKd());
+            psd.setAdr(ps.getAdr());
+            return psd;
+        }).collect(Collectors.toList()));
+        return r;
+    }
 
 }

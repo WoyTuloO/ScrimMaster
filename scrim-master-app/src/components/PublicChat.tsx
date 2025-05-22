@@ -109,8 +109,20 @@ export default function PublicChat() {
     };
 
     return (
-        <Box sx={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" , background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/../../public/img1.jpg)`}}>
-            <Container sx={{ height: "70vh" }}>
+        <Box
+            sx={{
+                opacity: 0,
+                animation: "fadeIn 1s forwards",
+                "@keyframes fadeIn": { from: { opacity: 0 }, to: { opacity: 1 } },
+                height: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: `linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url(/../../public/img1.jpg)`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+            }}
+        >    <Container sx={{ height: "70vh" }}>
                 <Paper elevation={4} sx={{background: "rgba(255,255,255,0.75)", p: 2, display: "grid", gridTemplateRows: "auto 1fr auto", height: "100%", gap: 2 }}>
                     <Typography variant="h5">Public Chat</Typography>
 
