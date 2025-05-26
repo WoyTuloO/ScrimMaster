@@ -1,4 +1,3 @@
-// src/App.tsx
 import React from "react";
 import "./App.css";
 import Nav from "./assets/Nav";
@@ -12,12 +11,13 @@ import { AuthProvider } from "./assets/AuthContext";
 import PlayerRanking from "./components/PlayerRanking";
 import TeamRanking from "./components/TeamRanking";
 import PublicUserProfile from "./components/PublicUserProfile";
-import UserPanel from "./components/UserPanel";
 import AdminPanel from "./components/AdminPanel";
 import ProtectedRoute from "./assets/ProtectedRoute";
 import PublicChat from "./components/PublicChat";
 import PrivateChat from "./components/PrivateChat";
 import MatchCreate from "./components/MatchCreate";
+import MatchDetail from "./components/MatchDetail";
+import Dashboard from "./components/Dashboard";
 
 
 const theme = createTheme({
@@ -42,7 +42,7 @@ function App() {
               <Route path="/players" element={<PlayerRanking />} />
               <Route path="/teams" element={<TeamRanking />} />
               <Route path="/user/:id" element={<PublicUserProfile />} />
-              <Route path="/profile" element={<UserPanel />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route
                   path="/admin"
                   element={
@@ -56,7 +56,7 @@ function App() {
 
               <Route path="/chat" element={<PublicChat />} />
               <Route path="/chat/:recipient" element={<PrivateChat />} />
-
+              <Route path="/match/:id" element={<MatchDetail />} />
               <Route path="/match/create/:proposalId" element={<MatchCreate />} />
             </Routes>
           </Container>

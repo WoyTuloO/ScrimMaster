@@ -7,7 +7,6 @@ import {
 import { styled } from '@mui/material/styles';
 import { AuthContext } from '../assets/AuthContext'; // adjust path as needed
 
-// Dopasowane do backendowego UserDTO
 interface UserDTO {
     id: number;
     username: string;
