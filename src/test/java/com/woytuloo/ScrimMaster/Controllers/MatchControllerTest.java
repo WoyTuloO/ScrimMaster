@@ -1,6 +1,7 @@
 package com.woytuloo.ScrimMaster.Controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woytuloo.ScrimMaster.DTO.MatchRequest;
 import com.woytuloo.ScrimMaster.Models.Match;
 import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Services.MatchService;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,10 +24,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Slice-test: ładujemy tylko MatchController, filtrowanie Spring Security wyłączone
- * (addFilters=false) aby nie przeszkadzały CSRF i autoryzacja.
- */
+
 @WebMvcTest(MatchController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class MatchControllerTest {
@@ -108,7 +105,7 @@ class MatchControllerTest {
     void updateMatch() throws Exception {
         Match incoming = sample(42);
 
-        Mockito.doNothing().when(matchService).updateMatch(any(Match.class));
+        Mockito.doNothing().when(matchService).updateMatch(any(MatchRequest.class));
 
         mockMvc.perform(put("/api/match")
                         .contentType(MediaType.APPLICATION_JSON)

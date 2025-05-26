@@ -2,8 +2,11 @@ package com.woytuloo.ScrimMaster.Models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Where;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -13,40 +16,41 @@ public class Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id", unique = true, nullable = false)
     private Long id;
 
-    @ManyToMany
-    @JoinTable(
-            name = "match_teams",
-            joinColumns = @JoinColumn(name = "match_id"),
-            inverseJoinColumns = @JoinColumn(name = "team_id")
-    )
-    private List<Team> teams = new ArrayList<>();
+    private String team1Name;
+    private int    team1Score;
 
-    private int team1Score;
-    private int team2Score;
+    private String team2Name;
+    private int    team2Score;
+
+    private String  matchDate;
+
+    @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Where(clause = "team_side = 1")
+    private List<PlayerStats> team1PlayerStats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Where(clause = "team_side = 2")
+    private List<PlayerStats> team2PlayerStats = new ArrayList<>();
 
     public Match() {}
 
-    public Match(Team team1, Team team2) {
-        this.teams.add(team1);
-        this.teams.add(team2);
-        this.team1Score = 0;
-        this.team2Score = 0;
-    }
+    public Match(String team1Name,
+                 String team2Name,
+                 int team1Score,
+                 int team2Score,
+                 List<PlayerStats> stats1,
+                 List<PlayerStats> stats2)
+    {
+        this.team1Name = team1Name;
+        this.team2Name = team2Name;
+        this.team1Score = team1Score;
+        this.team2Score = team2Score;
 
-    public Team getTeam1() {
-        if (teams.size() > 0) {
-            return teams.get(0);
-        }
-        return null;
-    }
+        this.team1PlayerStats.addAll(stats1);
+        this.team2PlayerStats.addAll(stats2);
 
-    public Team getTeam2() {
-        if (teams.size() > 1) {
-            return teams.get(1);
-        }
-        return null;
+        matchDate = LocalDate.now().toString();
     }
 }

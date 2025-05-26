@@ -56,12 +56,11 @@ public class MatchController {
             }
     )
     @GetMapping("{matchId}")
-    public ResponseEntity<Match> getMatchById(@PathVariable long matchId) {
-        Optional<Match> match = matchService.getMatchById(matchId);
-        if (match.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(match.get(), HttpStatus.OK);
+    public ResponseEntity<?> getMatchById(@PathVariable long matchId) {
+        return matchService.getMatchById(matchId)
+                .map(DTOMappers::mapToMatchDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/me")
@@ -98,22 +97,6 @@ public class MatchController {
     }
 
     @Operation(
-            summary = "Dodaj mecz",
-            description = "Tworzy nowy mecz między dwoma zespołami.",
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = MatchRequest.class))
-            ),
-            responses = @ApiResponse(responseCode = "201", description = "Utworzono",
-                    content = @Content(schema = @Schema(implementation = MatchRequest.class)))
-    )
-    @PostMapping
-    public ResponseEntity<MatchDTO> addMatch(@org.springframework.web.bind.annotation.RequestBody MatchRequest req) {
-        MatchDTO created = matchService.createMatch(req);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
-    }
-
-    @Operation(
             summary = "Usuń mecz",
             description = "Usuwa mecz o podanym ID.",
             parameters = @Parameter(name = "matchId", in = ParameterIn.PATH, example = "55"),
@@ -124,28 +107,4 @@ public class MatchController {
         long l = matchService.deleteMatch(matchId);
         return new ResponseEntity<>("Match deleted", HttpStatus.OK);
     }
-
-
-    @Operation(
-            summary = "Aktualizuj mecz",
-            description = "Aktualizuje datę, wynik lub przypisane zespoły istniejącego meczu.",
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = MatchRequest.class))
-            ),
-            responses = @ApiResponse(responseCode = "200", description = "Zaktualizowano")
-    )
-    @PutMapping
-    public ResponseEntity<MatchDTO> updateMatch(@org.springframework.web.bind.annotation.RequestBody MatchRequest req) {
-        MatchDTO updated = matchService.updateMatch(req);
-        if (updated == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(updated);
-    }
-
-
-
-
-
 }
