@@ -4,6 +4,7 @@ import com.woytuloo.ScrimMaster.DTO.DTOMappers;
 import com.woytuloo.ScrimMaster.DTO.MatchDTO;
 import com.woytuloo.ScrimMaster.DTO.MatchRequest;
 import com.woytuloo.ScrimMaster.Models.Match;
+import com.woytuloo.ScrimMaster.Models.PlayerStats;
 import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Repositories.MatchRepository;
@@ -11,6 +12,7 @@ import com.woytuloo.ScrimMaster.Repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -25,6 +27,10 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final TeamRepository teamRepository;
+    @Autowired
+    private TeamService teamService;
+    @Autowired
+    private ChatService chatService;
 
     @Autowired
     public MatchService(MatchRepository matchRepository,
@@ -43,49 +49,72 @@ public class MatchService {
     }
 
     public List<Match> getTeamMatches(long teamId){
-        return matchRepository.findAll().stream().filter(m -> m.getTeam1().getTeamId() == teamId || m.getTeam2().getTeamId() == teamId).collect(Collectors.toList());
+        Optional<Team> teamOptional = teamRepository.findById(teamId);
+        if(teamOptional.isPresent()) {
+            String teamName = teamOptional.get().getTeamName();
+            return matchRepository.findAll().stream().filter(m -> m.getTeam1Name().equals(teamName) || m.getTeam2Name().equals(teamName)).collect(Collectors.toList());
+        }
+        return null;
     }
 
-    public MatchDTO createMatch(MatchRequest req) {
-        Team t1 = teamRepository.findById(req.getTeam1Id())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Team1 not found"));
-        Team t2 = teamRepository.findById(req.getTeam2Id())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Team2 not found"));
-
-        Match match = new Match();
-        match.getTeams().add(t1);
-        match.getTeams().add(t2);
-        match.setTeam1Score(req.getTeam1Score());
-        match.setTeam2Score(req.getTeam2Score());
-
-        Match saved = matchRepository.save(match);
-        return DTOMappers.mapToMatchDTO(saved);
-    }
-
-
+    @Transactional
     public Match addMatch(Match match) {
-        matchRepository.save(match);
-        return match;
+        List<PlayerStats> stats1 = match.getTeam1PlayerStats();
+        List<PlayerStats> stats2 = match.getTeam2PlayerStats();
+
+        stats1.forEach(userService::updateUserStats);
+        stats2.forEach(userService::updateUserStats);
+
+        double avg1 = stats1.stream()
+                .mapToDouble(ps -> ps.getPlayer().getRanking())
+                .average()
+                .orElse(0);
+        double avg2 = stats2.stream()
+                .mapToDouble(ps -> ps.getPlayer().getRanking())
+                .average()
+                .orElse(0);
+
+        double expected1 = 1.0 / (1 + Math.pow(10, (avg2 - avg1) / 400));
+        double expected2 = 1 - expected1;
+
+        double actual1 = match.getTeam1Score() > match.getTeam2Score() ? 1
+                : match.getTeam1Score() < match.getTeam2Score() ? 0
+                : 0.5;
+        double actual2 = 1 - actual1;
+
+        int K = 30;
+        int delta1 = (int)Math.round(K * (actual1 - expected1));
+        int delta2 = (int)Math.round(K * (actual2 - expected2));
+
+        stats1.forEach(ps ->
+                userService.updateUserRanking(
+                        ps.getPlayer().getRanking() + delta1,
+                        ps.getPlayer().getId()
+                )
+        );
+        stats2.forEach(ps ->
+                userService.updateUserRanking(
+                        ps.getPlayer().getRanking() + delta2,
+                        ps.getPlayer().getId()
+                )
+        );
+
+        int team1DeltaTotal = delta1 * stats1.size();
+        int team2DeltaTotal = delta2 * stats2.size();
+
+        teamService.getTeamByName(match.getTeam1Name())
+                .ifPresent(t -> teamService.updateTeamRanking(t, t.getTeamRanking() + team1DeltaTotal));
+
+        teamService.getTeamByName(match.getTeam2Name())
+                .ifPresent(t -> teamService.updateTeamRanking(t, t.getTeamRanking() + team2DeltaTotal));
+
+        return matchRepository.save(match);
     }
 
     public long deleteMatch(long id) {
         matchRepository.deleteById(id);
         return id;
     }
-
-    public MatchDTO updateMatch(MatchRequest req) {
-        Optional<Match> opt = matchRepository.findById(req.getTeam1Id());
-        if (opt.isEmpty()) return null;
-        Match match = opt.get();
-        // jeśli chcesz, możesz też pozwolić na zmianę drużyn
-        match.setTeam1Score(req.getTeam1Score());
-        match.setTeam2Score(req.getTeam2Score());
-        Match updated = matchRepository.save(match);
-        return DTOMappers.mapToMatchDTO(updated);
-    }
-
 
     public List<Match> getUserMatches() {
         Optional<User> currentUser = userService.getCurrentUser();

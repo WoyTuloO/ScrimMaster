@@ -96,7 +96,9 @@ const PlayerRanking: React.FC = () => {
                     elevation={4}
                     sx={{
                         padding: 2,
-                        background: 'linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75))',
+                        background: 'linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75))',
+                        display: 'grid',
+                        gridTemplateRows: 'auto 1fr auto',
                         height: "60vh"
                     }}
                     >
@@ -113,7 +115,7 @@ const PlayerRanking: React.FC = () => {
                             Refresh
                         </Button>
                     </Box>
-                    <TableContainer sx={{ height: "60%", maxHeight: "60vh" }}>
+                    <TableContainer sx={{ overflow: 'auto' }}>
                         <Table stickyHeader aria-label="player ranking table">
                             <TableHead>
                                 <TableRow>
