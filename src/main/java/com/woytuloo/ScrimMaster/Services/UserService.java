@@ -1,6 +1,7 @@
 package com.woytuloo.ScrimMaster.Services;
 
 
+import com.woytuloo.ScrimMaster.Models.PlayerStats;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Użytkownik o takim adresie email już istnieje");
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRanking(1000);
         return userRepository.save(user);
     }
 
@@ -93,4 +95,28 @@ public class UserService {
     }
 
 
+    public void updateUserStats(PlayerStats playerStat) {
+
+        Optional<User> byId = userRepository.findById(playerStat.getPlayer().getId());
+        if (byId.isPresent()) {
+            User user = byId.get();
+            double newKd = user.getKd() == 0 ? playerStat.getKd(): (user.getKd() + playerStat.getKd())/2;
+            double newAdr = user.getAdr() == 0 ? playerStat.getAdr() : (user.getAdr() + playerStat.getAdr())/2;
+
+            user.setAdr(newAdr);
+            user.setKd(newKd) ;
+            userRepository.save(user);
+        }
+
+    }
+
+    public void updateUserRanking(int v, Long id) {
+        Optional<User> byId = userRepository.findById(id);
+        if (byId.isPresent()) {
+            User user = byId.get();
+            user.setRanking(v);
+            userRepository.save(user);
+        }
+
+    }
 }

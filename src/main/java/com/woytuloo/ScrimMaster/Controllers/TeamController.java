@@ -125,4 +125,9 @@ public class TeamController {
         teamService.deleteTeam(id);
         return new ResponseEntity<>("Team deleted", HttpStatus.OK);
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCapitansTeams(@PathVariable Long id) {
+        return new ResponseEntity<>(teamService.getCaptainsTeams(id), HttpStatus.OK);
+    }
 }
