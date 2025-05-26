@@ -21,12 +21,17 @@ public class ChatRoom {
     @Column(nullable = false)
     private String userB;
 
+    @Column(nullable = false)
+    private String status;
+
     public ChatRoom(String id, String userA, String userB) {
         this.id = id;
         this.userA = userA;
         this.userB = userB;
+        this.status = "Open";
     }
 
     public ChatRoom() {
+        this.status = "Open";
     }
 }

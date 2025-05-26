@@ -2,6 +2,7 @@ package com.woytuloo.ScrimMaster.DTO;
 
 import com.woytuloo.ScrimMaster.Models.*;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class DTOMappers {
@@ -30,39 +31,47 @@ public class DTOMappers {
                 .build();
     }
 
+    public static PlayerStatsDto toDto(PlayerStats ps) {
+        return new PlayerStatsDto(
+                ps.getId(),
+                ps.getPlayer().getUsername(),
+                ps.getTeamSide(),
+                ps.getKd(),
+                ps.getAdr()
+        );
+    }
+
     public static MatchDTO mapToMatchDTO(Match m) {
-        return MatchDTO.builder()
-                .id(m.getId())
-                .team1( mapToTeamDTO(m.getTeam1()) )
-                .team2( mapToTeamDTO(m.getTeam2()) )
-                .team1Score(m.getTeam1Score())
-                .team2Score(m.getTeam2Score())
-                .build();
+        List<PlayerStatsDto> team1 = m.getTeam1PlayerStats().stream()
+                .map(DTOMappers::toDto)
+                .collect(Collectors.toList());
+
+        List<PlayerStatsDto> team2 = m.getTeam2PlayerStats().stream()
+                .map(DTOMappers::toDto)
+                .collect(Collectors.toList());
+
+        return new MatchDTO(
+                m.getId(),
+                m.getTeam1Name(),
+                m.getTeam1Score(),
+                m.getTeam2Name(),
+                m.getTeam2Score(),
+                team1,
+                team2,
+                m.getMatchDate()
+        );
     }
 
 
-    public static MatchProposalDTO toDTO(MatchProposal p) {
-        MatchProposalDTO d = new MatchProposalDTO();
-        d.setId(p.getId());
-        d.setTeam1Id(p.getTeam1().getTeamId());
-        d.setTeam2Id(p.getTeam2().getTeamId());
-        d.setStatus(p.getStatus().name());
-        return d;
+    public static MatchProposalDTO toProposalDto(MatchProposal p, String enemyCpt) {
+        MatchProposalDTO dto = new MatchProposalDTO();
+        dto.setChatRoomId(p.getChatRoomId());
+        dto.setYourScore(p.getYourScore());
+        dto.setOpponentScore(p.getOpponentScore());
+        dto.setStatus(p.getStatus());
+        dto.setEnemyCaptain(enemyCpt);
+        return dto;
     }
 
-    public static MatchRequestDTO toRequestDTO(MatchSubmission s) {
-        MatchRequestDTO r = new MatchRequestDTO();
-        r.setTeamId(s.getTeam().getTeamId());
-        r.setFinalScore(s.getFinalScore());
-        r.setOpponentScore(s.getOpponentScore());
-        r.setStats(s.getStats().stream().map(ps -> {
-            PlayerStatDTO psd = new PlayerStatDTO();
-            psd.setPlayerId(ps.getPlayer().getId());
-            psd.setKd(ps.getKd());
-            psd.setAdr(ps.getAdr());
-            return psd;
-        }).collect(Collectors.toList()));
-        return r;
-    }
 
 }
