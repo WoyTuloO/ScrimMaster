@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,11 +36,6 @@ public class PrivateChatController {
             Principal principal,
             @RequestParam(defaultValue = "100") int limit
     ) {
-//        return List.of(
-//                new ChatMessage("CHAT", "Testowa wiadomość #1", "aaa"),
-//                new ChatMessage("CHAT", "Testowa wiadomość #2", "ddd")
-//        );
-//
         String user = principal.getName();
         if (!chatService.isParticipant(roomId, user)) {
             throw new ResponseStatusException(
@@ -47,13 +43,12 @@ public class PrivateChatController {
             );
         }
 
-        System.out.println(chatService.getLatestPrivate(roomId, limit).stream()
-                .map(m -> new ChatMessage("CHAT", m.getContent(), m.getSender()))
-                .collect(Collectors.toList()));
-
         return chatService.getLatestPrivate(roomId, limit).stream()
                 .map(m -> new ChatMessage("CHAT", m.getContent(), m.getSender()))
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    Collections.reverse(list);
+                    return list;})
+                );
     }
 
 
@@ -82,4 +77,5 @@ public class PrivateChatController {
         messagingTemplate.convertAndSendToUser(
                 room.getUserB(), "/queue/private." + roomId, out);
     }
+
 }

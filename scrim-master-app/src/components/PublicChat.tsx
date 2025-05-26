@@ -63,7 +63,6 @@ export default function PublicChat() {
             });
             client.subscribe("/user/queue/chat-rejected", (m: IMessage) => {
                 const rq: ChatRequest = JSON.parse(m.body);
-                alert(`Zaproszenie do ${rq.to} odrzucone`);
             });
         });
         clientRef.current = client;
@@ -88,7 +87,6 @@ export default function PublicChat() {
             body: JSON.stringify(rq),
         });
         setInviteTo(null);
-        alert(`Zaproszenie wysłane do ${rq.to}`);
     };
 
     const accept = () => {
