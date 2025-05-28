@@ -13,7 +13,7 @@ public class PlayerStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "match_id", nullable = true)
     @JsonIgnore
     private Match match;

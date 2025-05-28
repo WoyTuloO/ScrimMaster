@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,7 +58,7 @@ public class UserController {
             @Parameter(name = "email",   in = ParameterIn.QUERY, description = "Adres e-mail",      example = "a@b.com")
     })
     @GetMapping()
-    public ResponseEntity<List<User>> getUsers(
+    public ResponseEntity<?> getUsers(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String email
@@ -65,7 +66,7 @@ public class UserController {
          if(id != null){
              Optional<User> userById = userService.getUserById(id);
              if(userById.isPresent())
-                 return new ResponseEntity<>(userById.stream().toList(), HttpStatus.OK);
+                 return new ResponseEntity<>(userById.stream().map(DTOMappers::mapToUserDTO).toList(), HttpStatus.OK);
              return new ResponseEntity<>(HttpStatus.NOT_FOUND);
          } else if(username != null){
             return new ResponseEntity<>(userService.getUsersByName(username), HttpStatus.OK);
@@ -150,10 +151,13 @@ public class UserController {
             parameters = @Parameter(name = "userId", in = ParameterIn.PATH, example = "42"),
             responses = @ApiResponse(responseCode = "200", description = "Usunięto")
     )
-    @DeleteMapping("{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId){
-        userService.deleteUserById(userId);
-        return new ResponseEntity<>("Successfully deleted user", HttpStatus.OK);
+    @Transactional
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        if(userService.deleteUser(id))
+            return ResponseEntity.ok().build();
+
+        return ResponseEntity.notFound().build();
     }
 
 

@@ -22,10 +22,13 @@ import java.util.stream.Collectors;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
+
     @Autowired
-    public TeamService(TeamRepository teamRepository, UserRepository userRepository) {
+    public TeamService(TeamRepository teamRepository, UserRepository userRepository, UserService userService) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     public Team addTeam(Team team) {
@@ -106,5 +109,15 @@ public class TeamService {
     public void updateTeamRanking(Team t, int i) {
         t.setTeamRanking(i);
         teamRepository.save(t);
+    }
+
+
+    public List<TeamDTO> getPlayerTeams() {
+        Optional<User> currentUser = userService.getCurrentUser();
+        if(currentUser.isPresent())
+            return teamRepository.findAllByPlayers_Username(currentUser.get().getUsername())
+                    .stream().map(DTOMappers::mapToTeamDTO).toList();
+
+        return null;
     }
 }

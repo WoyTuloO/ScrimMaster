@@ -26,13 +26,12 @@ interface UserDTO {
     ranking: number;
 }
 
-type ProposalStatus = 'PENDING' | 'FINALIZED' | 'REJECTED';
 
 interface MatchProposalDTO {
     chatRoomId: string;
     yourScore: number;
     opponentScore: number;
-    status: ProposalStatus;
+    status: string;
     enemyCaptain: string;
 }
 
@@ -49,6 +48,7 @@ interface ChatRoomDTO {
     userA : string;
     userB : string;
     id : string;
+    status : string;
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -87,6 +87,7 @@ const Dashboard: React.FC = () => {
                     openChats = await openChatsRes.json();
                 }
                 if (mounted) setChatrooms(openChats);
+
 
                 const propRes = await fetch(
                     `http://localhost:8080/api/match/proposal/user/${userData.id}`,
@@ -141,6 +142,12 @@ const Dashboard: React.FC = () => {
         );
     }
 
+    const pendingProposalIds = new Set(
+        proposals
+            .filter((p) => p.status === "Pending")
+            .map((p) => p.chatRoomId)
+    );
+
     return (
         <Box
             sx={{
@@ -183,6 +190,7 @@ const Dashboard: React.FC = () => {
                             <TableHead>
                                 <TableRow>
                                     <StyledTableCell>Kapitan</StyledTableCell>
+                                    <StyledTableCell>Status</StyledTableCell>
                                     <StyledTableCell align="right">Akcja</StyledTableCell>
                                 </TableRow>
                             </TableHead>
@@ -191,10 +199,14 @@ const Dashboard: React.FC = () => {
                                 {
                                     chatrooms.map((c) => {
                                     const captain = c.userA === user.username ? c.userB : c.userA;
-                                    console.log(captain);
                                     return (
                                         <TableRow key={c.id}>
                                             <StyledTableCell>{captain}</StyledTableCell>
+
+                                            {c.status === "Open" ? (
+                                                <StyledTableCell >{c.status}</StyledTableCell>) : (
+                                                <StyledTableCell sx={{color: "#ff0000"}}>{c.status}</StyledTableCell>
+                                            )}
                                             <StyledTableCell align="right">
                                                 <Button
                                                     size="small"
@@ -219,7 +231,7 @@ const Dashboard: React.FC = () => {
                     <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat', fontWeight: 700 }}>
                         Oczekujące na zatwierdzenie
                     </Typography>
-                    {proposals.length > 0 ? (
+                    {proposals.length > 0 || pendingProposalIds.size > 0 ? (
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
@@ -229,6 +241,28 @@ const Dashboard: React.FC = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
+                                {chatrooms.map((c) => {
+                                    if (pendingProposalIds.has(c.id)) return null;
+
+                                    const captain = c.userA === user.username ? c.userB : c.userA;
+                                    if (c.status !== "Rejected") return null;
+
+                                    return (
+                                        <TableRow key={c.id}>
+                                            <StyledTableCell>{captain}</StyledTableCell>
+                                            <StyledTableCell>- : -</StyledTableCell>
+                                            <StyledTableCell align="right">
+                                                <Button
+                                                    sx={{ color: "#ff0000", fontWeight: 500 }}
+                                                    size="small"
+                                                    onClick={() => navigate(`/match/create/${c.id}`)}
+                                                >
+                                                    Uzupełnij
+                                                </Button>
+                                            </StyledTableCell>
+                                        </TableRow>
+                                    );
+                                })}
                                 {proposals.map((p) => (
                                     <TableRow key={p.chatRoomId}>
                                         <StyledTableCell>
@@ -237,9 +271,21 @@ const Dashboard: React.FC = () => {
                                         <StyledTableCell>
                                             {p.yourScore} : {p.opponentScore}
                                         </StyledTableCell>
+                                        {p.status === "Pending" ? (
                                         <StyledTableCell align="right" sx={{color:"#d800ff", fontWeight: 500}}>
                                             {p.status}
                                         </StyledTableCell>
+                                            ) : (
+                                            <StyledTableCell align="right">
+                                                <Button
+                                                    sx={{color:"#cf0101", fontWeight: 500}}
+                                                    size="small"
+                                                    onClick={() => navigate(`/match/create/${p.chatRoomId}`)}
+                                                >
+                                                    Uzupełnij
+                                                </Button>
+                                            </StyledTableCell>
+                                        )}
                                     </TableRow>
                                 ))}
                             </TableBody>

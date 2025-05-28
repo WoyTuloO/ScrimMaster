@@ -6,6 +6,9 @@ import React, {
     ReactNode,
     useCallback
 } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+let refreshingPromise: Promise<Response> | null = null;
 
 interface User {
     id: number;
@@ -44,15 +47,26 @@ export const useAuth = (): AuthContextType => {
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
-    const navigateOnUnauth = useCallback(() => {
+    const navigate = useNavigate();
 
-    }, []);
+    const navigateOnUnauth = useCallback(() => {
+        navigate('/login');
+    }, [navigate]);
 
     const authFetch = useCallback(async (input: RequestInfo, init: RequestInit = {}) => {
         init.credentials = 'include';
         let res = await fetch(input, init);
+
         if (res.status === 401) {
-            const refresh = await fetch('http://localhost:8080/api/auth/refresh', { method: 'POST', credentials: 'include' });
+            if (!refreshingPromise) {
+                refreshingPromise = fetch('http://localhost:8080/api/auth/refresh', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            }
+            const refresh = await refreshingPromise;
+            refreshingPromise = null;
+
             if (refresh.ok) {
                 res = await fetch(input, init);
             } else {
@@ -102,6 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const logout = async () => {
         await fetch('http://localhost:8080/api/auth/logout', { method: 'POST', credentials: 'include' });
         setUser(null);
+        navigate('/login');
     };
 
     const isAuthenticated = !!user;

@@ -2,6 +2,8 @@ package com.woytuloo.ScrimMaster.DTO;
 
 import com.woytuloo.ScrimMaster.Models.*;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,11 +26,17 @@ public class DTOMappers {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .kd(user.getKd())
-                .adr(user.getAdr())
+                .kd(roundTo2(user.getKd()))
+                .adr(roundTo2(user.getAdr()))
                 .ranking(user.getRanking())
                 .role(user.getRole())
                 .build();
+    }
+
+    private static double roundTo2(double value) {
+        return BigDecimal.valueOf(value)
+                .setScale(2, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 
     public static PlayerStatsDto toDto(PlayerStats ps) {

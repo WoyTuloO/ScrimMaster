@@ -34,6 +34,6 @@ public class MatchProposal {
     @Column(nullable = false)
     private ProposalStatus status;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "proposal", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PlayerStats> stats = new ArrayList<>();
 }

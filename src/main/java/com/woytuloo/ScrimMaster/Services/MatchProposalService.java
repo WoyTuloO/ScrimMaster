@@ -32,28 +32,30 @@ public class MatchProposalService {
         this.chatRoomRepo = chatRoomRepo;
     }
 
-    public MatchProposal addProposal(MatchProposalRequest req) {
+    public ProposalStatus addProposal(MatchProposalRequest req) {
 
         MatchProposal proposal = toEntity(req);
         proposal.setStatus(ProposalStatus.Pending);
 
         if(!proposalRepo.existsByChatRoomId(proposal.getChatRoomId())) {
             proposalRepo.save(proposal);
-            return proposal;
+            return ProposalStatus.Pending;
         }
 
         MatchProposal prop2 = proposalRepo.findByChatRoomId(proposal.getChatRoomId());
 
         if(prop2.getCreatedBy() == proposal.getCreatedBy()) {
-            replaceProposal(prop2, proposal);
-            return proposal;
+            replaceProposal(proposal);
+            return ProposalStatus.Pending;
         }
 
         if(prop2.getOpponentScore() == proposal.getYourScore() && prop2.getYourScore() == proposal.getOpponentScore()) {
             finalizeMatchProposal(proposal, prop2);
             removeProposals(proposal.getChatRoomId());
+            return ProposalStatus.Pending;
         }
-        return proposal;
+
+        return rejectProposals(proposal.getChatRoomId());
     }
 
     public void removeProposals(UUID chatRoomId){
@@ -61,24 +63,34 @@ public class MatchProposalService {
     }
 
     public ProposalStatus rejectProposals(UUID chatRoomId){
-        proposalRepo.findAllByChatRoomId(chatRoomId).forEach(proposal -> {
-            proposal.setStatus(ProposalStatus.Rejected);
-            proposalRepo.save(proposal);
-        });
+        removeProposals(chatRoomId);
+
+        ChatRoom chatRoomById = chatRoomRepo.findChatRoomById(String.valueOf(chatRoomId));
+        chatRoomById.setStatus("Rejected");
+        chatRoomRepo.save(chatRoomById);
 
         return ProposalStatus.Rejected;
     }
 
-    public void replaceProposal(MatchProposal prev, MatchProposal newProposal) {
-        prev.setStats(newProposal.getStats());
+    public void replaceProposal(MatchProposal newProposal) {
+        MatchProposal prev = proposalRepo.findByChatRoomId(newProposal.getChatRoomId());
+
+        for (PlayerStats ps : prev.getStats()) {
+            ps.setProposal(null);
+        }
+        prev.getStats().clear();
+
+        for (PlayerStats ps : newProposal.getStats()) {
+            ps.setProposal(prev);
+            prev.getStats().add(ps);
+        }
+
         prev.setOpponentScore(newProposal.getOpponentScore());
         prev.setYourScore(newProposal.getYourScore());
         prev.setTeamName(newProposal.getTeamName());
+
         proposalRepo.save(prev);
     }
-
-
-
 
 
     public void finalizeMatchProposal(MatchProposal proposal, MatchProposal prop2) {
@@ -135,16 +147,13 @@ public class MatchProposalService {
 
     public List<MatchProposalDTO> getUsersProposals(Long id) {
         Optional<User> byId = userRepo.findById(id);
-        if(byId.isEmpty()) {
-            return null;
-        }
-        return proposalRepo.findAllByCreatedBy(id).stream().map(p->{
+        return byId.map(user -> proposalRepo.findAllByCreatedBy(id).stream().map(p -> {
             ChatRoom byChatRoomId = chatRoomRepo.findChatRoomById(String.valueOf(p.getChatRoomId()));
-            if(!byChatRoomId.getUserA().equals(byId.get().getUsername()))
+            if (!byChatRoomId.getUserA().equals(user.getUsername()))
                 return DTOMappers.toProposalDto(p, byChatRoomId.getUserA());
             else
                 return DTOMappers.toProposalDto(p, byChatRoomId.getUserB());
-            }).toList();
+        }).toList()).orElse(null);
 
     }
 }

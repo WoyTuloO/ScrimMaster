@@ -29,18 +29,14 @@ interface UserDTO {
     kd: number;
     adr: number;
     ranking: number;
+    deleted?: boolean;
 }
 
 interface TeamDTO {
     teamId: number;
     teamName: string;
     captain?: UserDTO | null;
-    player2?: UserDTO | null;
-    player3?: UserDTO | null;
-    player4?: UserDTO | null;
-    player5?: UserDTO | null;
-    player6?: UserDTO | null;
-    player7?: UserDTO | null;
+    players: UserDTO[];
     teamRanking: number;
 }
 
@@ -65,15 +61,10 @@ interface RowTeamProps {
 const RowTeam: React.FC<RowTeamProps> = ({ team }) => {
     const [open, setOpen] = useState(false);
 
-    const players = [
-        { role: 'Captain', player: team.captain },
-        { role: 'Player2', player: team.player2 },
-        { role: 'Player3', player: team.player3 },
-        { role: 'Player4', player: team.player4 },
-        { role: 'Player5', player: team.player5 },
-        { role: 'Player6', player: team.player6 },
-        { role: 'Player7', player: team.player7 },
-    ].filter(item => item.player != null);
+    const players =
+        team.captain && team.players.every(p => p.id !== team.captain?.id)
+            ? [team.captain, ...team.players]
+            : team.players;
 
     return (
         <React.Fragment>
@@ -97,28 +88,35 @@ const RowTeam: React.FC<RowTeamProps> = ({ team }) => {
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            {players.length > 0 ? (
+                            {players && players.length > 0 ? (
                                 <>
                                     <Typography variant="h6" gutterBottom sx={{ fontFamily: 'Montserrat' }}>
                                         Players:
                                     </Typography>
-                                    {players.map((item, index) => (
-                                        <Box key={index} sx={{ mb: 1, pl: 2 }}>
-                                            <Typography variant="body1" sx={{ fontFamily: 'Montserrat' }}>
-                                                <strong>{item.role}:</strong>{' '}
-                                                <Link
-                                                    component={RouterLink}
-                                                    to={`/user/${item.player?.id}`}
-                                                    sx={{ textDecoration: 'none', color: 'inherit','&:hover': {
-                                                            color: "#ff8000",
-                                                            textDecoration: 'underline',
-                                                        } }}
-                                                >
-                                                    {item.player?.username}
-                                                </Link>{' '}
-                                                (KD: {item.player?.kd}, ADR: {item.player?.adr}, Ranking: {item.player?.ranking})
-                                            </Typography>
-                                        </Box>
+                                    {players.map((player, index) => (
+                                        player.username === "User Deleted" ? (
+                                            <></>
+                                            ) : (
+                                                <Box key={player.id || index} sx={{ mb: 1, pl: 2 }}>
+                                                    <Typography variant="body1" sx={{ fontFamily: 'Montserrat' }}>
+                                                        <Link
+                                                            component={RouterLink}
+                                                            to={`/user/${player.id}`}
+                                                            sx={{
+                                                                textDecoration: 'none',
+                                                                color: 'inherit',
+                                                                '&:hover': {
+                                                                    color: "#ff8000",
+                                                                    textDecoration: 'underline',
+                                                                }
+                                                            }}
+                                                        >
+                                                            {player.deleted ? "User Deleted" : player.username}
+                                                        </Link>{' '}
+                                                        (KD: {player.kd}, ADR: {player.adr}, Ranking: {player.ranking})
+                                                    </Typography>
+                                                </Box>)
+
                                     ))}
                                 </>
                             ) : (
@@ -142,9 +140,7 @@ const TeamRanking: React.FC = () => {
     const fetchTeams = () => {
         fetch('http://localhost:8080/api/team')
             .then(res => res.json())
-            .then((data: TeamDTO[]) => {
-                setTeams(data);
-            })
+            .then((data: TeamDTO[]) => setTeams(data))
             .catch(err => console.error(err));
     };
 

@@ -18,6 +18,8 @@ import PrivateChat from "./components/PrivateChat";
 import MatchCreate from "./components/MatchCreate";
 import MatchDetail from "./components/MatchDetail";
 import Dashboard from "./components/Dashboard";
+import MyTeamsPage from "./components/MyTeamsPage";
+import TeamEditOrCreatePage from "./components/TeamEditOrCreatePage";
 
 
 const theme = createTheme({
@@ -53,11 +55,15 @@ function App() {
               />
 
               <Route path="/scrims" element={<PublicChat />} />
-
               <Route path="/chat" element={<PublicChat />} />
               <Route path="/chat/:recipient" element={<PrivateChat />} />
               <Route path="/match/:id" element={<MatchDetail />} />
               <Route path="/match/create/:proposalId" element={<MatchCreate />} />
+
+              <Route path="/myteams" element={<MyTeamsPage />} />
+              <Route path="/teams/create" element={<TeamEditOrCreatePage />} />
+              <Route path="/teams/edit/:teamId" element={<TeamEditOrCreatePage />} />
+
             </Routes>
           </Container>
         </ThemeProvider>

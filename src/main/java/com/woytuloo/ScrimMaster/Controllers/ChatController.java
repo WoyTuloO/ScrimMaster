@@ -25,7 +25,7 @@ public class ChatController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> getUsersChats(@PathVariable String userId) {
-        List<ChatRoom> usersChatRooms = chatService.getUsersChatRooms(userId).stream().filter(cr -> cr.getStatus().equals("Open")).toList();
+        List<ChatRoom> usersChatRooms = chatService.getUsersChatRooms(userId).stream().filter(cr -> cr.getStatus().equals("Open") || cr.getStatus().equals("Rejected")).toList();
         if(usersChatRooms.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

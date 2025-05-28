@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +30,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll().stream().filter(u-> !u.getUsername().equals("User Deleted")).sorted(Comparator.comparing(User::getRanking).reversed()).collect(Collectors.toList());
     }
 
     public List<User> getUsersByName(String name) {
@@ -118,5 +119,18 @@ public class UserService {
             userRepository.save(user);
         }
 
+    }
+
+    public boolean deleteUser(Long id){
+        Optional<User> userOpt = userRepository.findById(id);
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+//            user.setDeleted(true);
+            user.setUsername("User Deleted");
+            user.setEmail("deleted_" + user.getId() + "@example.com");
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 }

@@ -5,7 +5,7 @@ import {
     CircularProgress, Button
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { AuthContext } from '../assets/AuthContext'; // adjust path as needed
+import { AuthContext } from '../assets/AuthContext';
 
 interface UserDTO {
     id: number;

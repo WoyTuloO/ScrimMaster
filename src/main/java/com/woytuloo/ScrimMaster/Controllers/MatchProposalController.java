@@ -4,6 +4,7 @@ package com.woytuloo.ScrimMaster.Controllers;
 import com.woytuloo.ScrimMaster.DTO.MatchProposalDTO;
 import com.woytuloo.ScrimMaster.DTO.MatchProposalRequest;
 import com.woytuloo.ScrimMaster.Models.MatchProposal;
+import com.woytuloo.ScrimMaster.Models.ProposalStatus;
 import com.woytuloo.ScrimMaster.Services.MatchProposalService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,8 @@ public class MatchProposalController {
         System.out.println(request);
 
         try{
-        MatchProposal matchProposal = matchProposalService.addProposal(request);
-        if (matchProposal != null)
-            return new ResponseEntity<>(matchProposal, HttpStatus.CREATED);
-        else
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            ProposalStatus status = matchProposalService.addProposal(request);
+            return new ResponseEntity<>(status, HttpStatus.CREATED);
 
         } catch (Exception e) {
             e.printStackTrace();

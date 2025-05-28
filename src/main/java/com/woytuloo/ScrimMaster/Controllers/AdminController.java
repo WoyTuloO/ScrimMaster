@@ -67,8 +67,7 @@ public class AdminController {
     )
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (userRepo.existsById(id)) {
-            userRepo.deleteById(id);
+        if (userService.deleteUser(id)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();
