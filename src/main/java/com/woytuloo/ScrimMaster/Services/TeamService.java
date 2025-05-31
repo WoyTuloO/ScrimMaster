@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,12 +24,14 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final TeamInvitationService teamInvitationService;
 
     @Autowired
-    public TeamService(TeamRepository teamRepository, UserRepository userRepository, UserService userService) {
+    public TeamService(TeamRepository teamRepository, UserRepository userRepository, UserService userService, TeamInvitationService teamInvitationService) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.userService = userService;
+        this.teamInvitationService = teamInvitationService;
     }
 
     public Team addTeam(Team team) {
@@ -60,24 +63,45 @@ public class TeamService {
         return null;
     }
 
+//    public TeamDTO createTeam(TeamRequest req) {
+//        User captain = userRepository.findById(req.getCaptainId())
+//                .orElseThrow(() -> new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND, "Captain not found"));
+//        List<User> players = userRepository.findAllById(req.getPlayerIds());
+//        if (players.stream().noneMatch(u -> u.getId().equals(captain.getId()))) {
+//            players.add(captain);
+//        }
+//
+//        Team team = new Team();
+//        team.setTeamName(req.getTeamName());
+//        team.setCaptain(captain);
+//        team.setPlayers(players);
+//        team.setTeamRanking(req.getTeamRanking());
+//        Team saved = teamRepository.save(team);
+//
+//        return DTOMappers.mapToTeamDTO(saved);
+//    }
+
     public TeamDTO createTeam(TeamRequest req) {
         User captain = userRepository.findById(req.getCaptainId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Captain not found"));
-        List<User> players = userRepository.findAllById(req.getPlayerIds());
-        if (players.stream().noneMatch(u -> u.getId().equals(captain.getId()))) {
-            players.add(captain);
-        }
 
         Team team = new Team();
         team.setTeamName(req.getTeamName());
         team.setCaptain(captain);
-        team.setPlayers(players);
+        team.setPlayers(new ArrayList<>(List.of(captain)));
         team.setTeamRanking(req.getTeamRanking());
         Team saved = teamRepository.save(team);
 
+        List<Long> playerIdsToInvite = req.getPlayerIds().stream()
+                .filter(id -> !id.equals(captain.getId()))
+                .toList();
+        teamInvitationService.inviteUsersToTeam(playerIdsToInvite, saved, captain);
+
         return DTOMappers.mapToTeamDTO(saved);
     }
+
 
     public TeamDTO updateTeam(TeamRequest req) {
         Optional<Team> opt = teamRepository.findById(req.getCaptainId());
