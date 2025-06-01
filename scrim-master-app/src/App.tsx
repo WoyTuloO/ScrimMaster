@@ -20,6 +20,7 @@ import MatchDetail from "./components/MatchDetail";
 import Dashboard from "./components/Dashboard";
 import MyTeamsPage from "./components/MyTeamsPage";
 import TeamEditOrCreatePage from "./components/TeamEditOrCreatePage";
+import AccountPage from "./components/AccountPage";
 
 
 const theme = createTheme({
@@ -63,6 +64,7 @@ function App() {
               <Route path="/myteams" element={<MyTeamsPage />} />
               <Route path="/teams/create" element={<TeamEditOrCreatePage />} />
               <Route path="/teams/edit/:teamId" element={<TeamEditOrCreatePage />} />
+              <Route path="/account" element={<AccountPage />} />
 
             </Routes>
           </Container>

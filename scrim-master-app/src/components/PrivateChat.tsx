@@ -31,7 +31,7 @@ export default function PrivateChat() {
     if (!recipient) {
         return (
             <Box sx={{ p: 4, textAlign: "center" }}>
-                <Typography variant="h6">Brak ID prywatnego czatu.</Typography>
+                <Typography variant="h6">There is no ID for this private chat.</Typography>
             </Box>
         );
     }
@@ -57,7 +57,7 @@ export default function PrivateChat() {
                     setError(null);
                 }
             } catch {
-                if (!cancelled) setError("Nie udało się załadować historii");
+                if (!cancelled) setError("Couldn't load chat history");
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -124,7 +124,7 @@ export default function PrivateChat() {
                     }}
                 >
                     <Typography variant="h5" align="center" sx={{ fontWeight: 700 }}>
-                        Prywatny czat z {other}
+                        Private chat with {other}
                     </Typography>
 
                     {loading ? (
@@ -161,10 +161,10 @@ export default function PrivateChat() {
                             placeholder="Napisz wiadomość…"
                         />
                         <Button variant="contained" onClick={send}>
-                            Wyślij
+                            Send
                         </Button>
                         <Button variant="outlined" onClick={goToMatchCreate}>
-                            Dodaj mecz
+                            Create match
                         </Button>
                     </Box>
                 </Paper>

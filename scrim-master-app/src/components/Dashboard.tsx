@@ -137,7 +137,7 @@ const Dashboard: React.FC = () => {
     if (!user) {
         return (
             <Typography variant="h6" align="center" sx={{ mt: 5, fontFamily: 'Montserrat' }}>
-                Nie jesteś zalogowany.
+                You are not logged in.
             </Typography>
         );
     }
@@ -183,15 +183,15 @@ const Dashboard: React.FC = () => {
 
                 <Paper elevation={2} sx={{ p: 2, mb: 4 }}>
                     <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat', fontWeight: 700 }}>
-                        Aktywne Mecze
+                        Active Chatrooms
                     </Typography>
                     {chatrooms.length > 0 ? (
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell>Kapitan</StyledTableCell>
+                                    <StyledTableCell>Captain</StyledTableCell>
                                     <StyledTableCell>Status</StyledTableCell>
-                                    <StyledTableCell align="right">Akcja</StyledTableCell>
+                                    <StyledTableCell align="right">Action</StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -212,7 +212,7 @@ const Dashboard: React.FC = () => {
                                                     size="small"
                                                     onClick={() => navigate(`/chat/${c.id}`, { state: { captain }})}
                                                 >
-                                                    Przejdź
+                                                    Navigate
                                                 </Button>
                                             </StyledTableCell>
                                         </TableRow>
@@ -222,21 +222,21 @@ const Dashboard: React.FC = () => {
                         </Table>
                     ) : (
                         <Typography sx={{ fontFamily: 'Montserrat' }}>
-                            Jeszcze nie rozpocząłeś żadnego meczu.
+                            You don't any chatroom open yet.
                         </Typography>
                     )}
                 </Paper>
 
                 <Paper elevation={2} sx={{ p: 2, mb: 4 }}>
                     <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat', fontWeight: 700 }}>
-                        Oczekujące na zatwierdzenie
+                        Awaiting for your response
                     </Typography>
                     {proposals.length > 0 || pendingProposalIds.size > 0 ? (
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell>Przeciwnik</StyledTableCell>
-                                    <StyledTableCell>Wynik</StyledTableCell>
+                                    <StyledTableCell>Opponent</StyledTableCell>
+                                    <StyledTableCell>Score</StyledTableCell>
                                     <StyledTableCell align="right">Status</StyledTableCell>
                                 </TableRow>
                             </TableHead>
@@ -257,7 +257,7 @@ const Dashboard: React.FC = () => {
                                                     size="small"
                                                     onClick={() => navigate(`/match/create/${c.id}`)}
                                                 >
-                                                    Uzupełnij
+                                                    Answer
                                                 </Button>
                                             </StyledTableCell>
                                         </TableRow>
@@ -282,7 +282,7 @@ const Dashboard: React.FC = () => {
                                                     size="small"
                                                     onClick={() => navigate(`/match/create/${p.chatRoomId}`)}
                                                 >
-                                                    Uzupełnij
+                                                    Answer
                                                 </Button>
                                             </StyledTableCell>
                                         )}
@@ -292,23 +292,23 @@ const Dashboard: React.FC = () => {
                         </Table>
                     ) : (
                         <Typography sx={{ fontFamily: 'Montserrat' }}>
-                            Brak oczekujących.
+                            You don't have any matches pending.
                         </Typography>
                     )}
                 </Paper>
 
                 <Paper elevation={2} sx={{ p: 2, mb: 4 }}>
                     <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat', fontWeight: 700 }}>
-                        Twoje mecze
+                        Your matches
                     </Typography>
                     {matches.length > 0 ? (
                         <Table size="small">
                             <TableHead>
                                 <TableRow>
-                                    <StyledTableCell>Data</StyledTableCell>
-                                    <StyledTableCell>Przeciwnik</StyledTableCell>
-                                    <StyledTableCell>Wynik</StyledTableCell>
-                                    <StyledTableCell align="right">Szczegóły</StyledTableCell>
+                                    <StyledTableCell>Date</StyledTableCell>
+                                    <StyledTableCell>Opponent</StyledTableCell>
+                                    <StyledTableCell>Score</StyledTableCell>
+                                    <StyledTableCell align="right">Details</StyledTableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -337,7 +337,7 @@ const Dashboard: React.FC = () => {
                                                     size="small"
                                                     onClick={() => navigate(`/match/${m.id}`)}
                                                 >
-                                                    Zobacz
+                                                    Show
                                                 </Button>
                                             </StyledTableCell>
                                         </TableRow>
@@ -347,7 +347,7 @@ const Dashboard: React.FC = () => {
                         </Table>
                     ) : (
                         <Typography sx={{ fontFamily: 'Montserrat' }}>
-                            Jeszcze nie rozegrałeś żadnego meczu.
+                            You haven't played any games yet.
                         </Typography>
                     )}
                 </Paper>

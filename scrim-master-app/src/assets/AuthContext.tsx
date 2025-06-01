@@ -6,7 +6,10 @@ import React, {
     ReactNode,
     useCallback
 } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+
+
 
 let refreshingPromise: Promise<Response> | null = null;
 
@@ -44,14 +47,22 @@ export const useAuth = (): AuthContextType => {
     return useContext(AuthContext);
 };
 
+
+
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const publicRoutes = ['/login', '/register'];
+
     const navigateOnUnauth = useCallback(() => {
-        navigate('/login');
-    }, [navigate]);
+        if (!publicRoutes.includes(location.pathname)) {
+            navigate('/login');
+        }
+    }, [navigate, location.pathname]);
+
 
     const authFetch = useCallback(async (input: RequestInfo, init: RequestInit = {}) => {
         init.credentials = 'include';

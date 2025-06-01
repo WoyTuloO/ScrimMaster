@@ -52,7 +52,9 @@ const ResponsiveAppBar: React.FC = () => {
             navigate('/dashboard');
         }else if(setting === 'My Teams'){
             navigate('/myteams');
-        }
+        }else if(setting === 'Account')
+            navigate('/account');
+
         handleCloseUserMenu();
     };
 

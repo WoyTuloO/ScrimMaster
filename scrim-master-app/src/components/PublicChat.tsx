@@ -138,26 +138,26 @@ export default function PublicChat() {
                             value={txt}
                             onChange={(e) => setTxt(e.target.value)}
                             onKeyDown={(e) => e.key === "Enter" && send()}
-                            placeholder="Napisz wiadomość…"
+                            placeholder="Type something…"
                         />
-                        <Button variant="contained" onClick={send}>Wyślij</Button>
+                        <Button variant="contained" onClick={send}>Send</Button>
                     </Box>
                 </Paper>
             </Container>
 
             <Dialog open={!!inviteTo} onClose={() => setInviteTo(null)}>
-                <DialogTitle>Zaproszenie do prywatnego czatu</DialogTitle>
+                <DialogTitle>Invite to private chat</DialogTitle>
                 <DialogActions>
-                    <Button onClick={() => setInviteTo(null)}>Anuluj</Button>
-                    <Button onClick={doInvite} variant="contained">Wyślij</Button>
+                    <Button onClick={() => setInviteTo(null)}>Cancel</Button>
+                    <Button onClick={doInvite} variant="contained">Send</Button>
                 </DialogActions>
             </Dialog>
 
             <Dialog open={!!incoming} onClose={reject}>
-                <DialogTitle>Zaproszenie od {incoming?.from}</DialogTitle>
+                <DialogTitle>Invitation from {incoming?.from}</DialogTitle>
                 <DialogActions>
-                    <Button onClick={reject}>Odrzuć</Button>
-                    <Button onClick={accept} variant="contained">Akceptuj</Button>
+                    <Button onClick={reject}>Decline</Button>
+                    <Button onClick={accept} variant="contained">Accept</Button>
                 </DialogActions>
             </Dialog>
         </Box>
