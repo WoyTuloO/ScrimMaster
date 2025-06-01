@@ -23,11 +23,9 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final UserService userService;
-    private final UserRepository userRepo;
 
-    public AdminController(UserService userService, UserRepository userRepo) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.userRepo = userRepo;
     }
 
     @Operation(
@@ -53,6 +51,7 @@ public class AdminController {
                 .map(DTOMappers::mapToUserDTO)
                 .toList();
     }
+
 
     @Operation(
             summary = "Usuń użytkownika",
