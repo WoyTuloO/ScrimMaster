@@ -91,7 +91,7 @@ public class TeamService {
         team.setTeamName(req.getTeamName());
         team.setCaptain(captain);
         team.setPlayers(new ArrayList<>(List.of(captain)));
-        team.setTeamRanking(req.getTeamRanking());
+        team.setTeamRanking(1000);
         Team saved = teamRepository.save(team);
 
         List<Long> playerIdsToInvite = req.getPlayerIds().stream()
@@ -144,4 +144,5 @@ public class TeamService {
 
         return null;
     }
+
 }

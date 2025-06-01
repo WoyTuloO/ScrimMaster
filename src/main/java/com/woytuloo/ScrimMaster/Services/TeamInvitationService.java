@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,16 +21,28 @@ public class TeamInvitationService {
     private final TeamInvitationRepository invitationRepo;
     private final UserRepository userRepo;
     private final TeamRepository teamRepo;
+    private final UserService userService;
 
-    public List<TeamInvitationDTO> getPendingInvitationsForUser(User user) {
-        return invitationRepo.findByInvitedUserAndStatus(user, InvitationStatus.PENDING)
+    public List<TeamInvitationDTO> getPendingInvitationsForUser() {
+        Optional<User> currentUser = userService.getCurrentUser();
+        if(currentUser.isEmpty())
+            throw new RuntimeException("Nieautoryzowany dostęp!");
+
+        return invitationRepo.findByInvitedUserAndStatus(currentUser.get(), InvitationStatus.PENDING)
                 .stream()
                 .map(inv -> new TeamInvitationDTO(inv.getId(), inv.getTeam().getTeamName(), inv.getInvitedBy().getUsername()))
                 .toList();
     }
 
     @Transactional
-    public void acceptInvitation(Long invitationId, User user) {
+    public void acceptInvitation(Long invitationId) {
+
+        Optional<User> userOpt = userService.getCurrentUser();
+        if(userOpt.isEmpty())
+            throw new RuntimeException("Nieautoryzowany dostęp!");
+
+        User user = userOpt.get();
+
         TeamInvitation inv = invitationRepo.findById(invitationId).orElseThrow();
         if (!inv.getInvitedUser().equals(user) || inv.getStatus() != InvitationStatus.PENDING)
             throw new RuntimeException("Nieautoryzowane lub już obsłużone!");
@@ -41,7 +54,13 @@ public class TeamInvitationService {
     }
 
     @Transactional
-    public void declineInvitation(Long invitationId, User user) {
+    public void declineInvitation(Long invitationId) {
+
+        Optional<User> userOpt = userService.getCurrentUser();
+        if(userOpt.isEmpty())
+            throw new RuntimeException("Nieautoryzowany dostęp!");
+
+        User user = userOpt.get();
         TeamInvitation inv = invitationRepo.findById(invitationId).orElseThrow();
         if (!inv.getInvitedUser().equals(user) || inv.getStatus() != InvitationStatus.PENDING)
             throw new RuntimeException("Nieautoryzowane lub już obsłużone!");

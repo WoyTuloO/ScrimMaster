@@ -16,18 +16,18 @@ public class TeamInvitationController {
     private final TeamInvitationService invitationService;
 
     @GetMapping("/pending")
-    public List<TeamInvitationDTO> getPendingInvitations(@AuthenticationPrincipal User user) {
-        return invitationService.getPendingInvitationsForUser(user);
+    public List<TeamInvitationDTO> getPendingInvitations() {
+        return invitationService.getPendingInvitationsForUser();
     }
 
     @PostMapping("/{invId}/accept")
-    public void accept(@PathVariable Long invId, @AuthenticationPrincipal User user) {
-        invitationService.acceptInvitation(invId, user);
+    public void accept(@PathVariable Long invId) {
+        invitationService.acceptInvitation(invId);
     }
 
     @PostMapping("/{invId}/decline")
-    public void decline(@PathVariable Long invId, @AuthenticationPrincipal User user) {
-        invitationService.declineInvitation(invId, user);
+    public void decline(@PathVariable Long invId) {
+        invitationService.declineInvitation(invId);
     }
 }
 

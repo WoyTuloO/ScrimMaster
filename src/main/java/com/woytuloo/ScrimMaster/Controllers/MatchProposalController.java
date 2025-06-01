@@ -19,7 +19,6 @@ import java.util.List;
 public class MatchProposalController {
     MatchProposalService matchProposalService;
 
-
     public MatchProposalController(MatchProposalService matchProposalService) {
         this.matchProposalService = matchProposalService;
     }
@@ -31,7 +30,6 @@ public class MatchProposalController {
         try{
             ProposalStatus status = matchProposalService.addProposal(request);
             return new ResponseEntity<>(status, HttpStatus.CREATED);
-
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
