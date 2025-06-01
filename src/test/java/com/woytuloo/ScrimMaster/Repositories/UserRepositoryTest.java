@@ -52,31 +52,28 @@ class UserRepositoryTest {
         user1.setKd(1.2);
         user1.setAdr(2.3);
         user1.setRanking(10);
-        user1.setPersmissionLevel(1);
 
         User user2 = new User("UserTwo", "password2", "usertwo@example.com");
         user2.setKd(2.3);
         user2.setAdr(3.4);
         user2.setRanking(20);
-        user2.setPersmissionLevel(2);
 
         User user3 = new User("UserThree", "password3", "userthree@example.com");
         user3.setKd(3.4);
         user3.setAdr(4.5);
         user3.setRanking(30);
-        user3.setPersmissionLevel(3);
 
         User user4 = new User("UserFour", "password4", "userfour@example.com");
         user4.setKd(4.5);
         user4.setAdr(5.6);
         user4.setRanking(40);
-        user4.setPersmissionLevel(4);
+        user4.setRole("ROLE_ADMIN");
 
         User user5 = new User("UserFive", "password5", "userfive@example.com");
         user5.setKd(5.6);
         user5.setAdr(6.7);
         user5.setRanking(50);
-        user5.setPersmissionLevel(5);
+        user5.setRole("ROLE_ADMIN");
 
         underTest.save(user1);
         underTest.save(user2);
