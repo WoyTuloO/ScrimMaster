@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -70,7 +71,7 @@ public class TeamController {
         if(teams.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        List<TeamDTO> teamDTOs = teams.stream().map(DTOMappers::mapToTeamDTO).toList();
+        List<TeamDTO> teamDTOs = teams.stream().map(DTOMappers::mapToTeamDTO).sorted(Comparator.comparing(TeamDTO::getTeamRanking).reversed()).toList();
         return new ResponseEntity<>(teamDTOs, HttpStatus.OK);
     }
 
@@ -124,5 +125,18 @@ public class TeamController {
     public ResponseEntity<String> deleteTeam(@PathVariable Long id) {
         teamService.deleteTeam(id);
         return new ResponseEntity<>("Team deleted", HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getCapitansTeams(@PathVariable Long id) {
+        return new ResponseEntity<>(teamService.getCaptainsTeams(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getPlayerTeams() {
+        List<TeamDTO> playerTeams = teamService.getPlayerTeams();
+        if (playerTeams != null)
+            return new ResponseEntity<>(playerTeams, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

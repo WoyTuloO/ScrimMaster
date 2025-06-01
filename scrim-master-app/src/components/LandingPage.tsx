@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Container, Button } from '@mui/material';
-// @ts-ignore
-import Features from './Features.tsx';
+
+import Features from './Features';
 import HowItWorks from "./HowItWorks";
 import CTASection from "./CTASection";
 

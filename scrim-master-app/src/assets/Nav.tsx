@@ -17,7 +17,7 @@ import { AuthContext } from './AuthContext';
 import GamepadIcon from '@mui/icons-material/Gamepad';
 
 const pages = ['Teams', 'Scrims', 'Players'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Profile', 'Account', 'My Teams', 'Dashboard', 'Logout'];
 
 const ResponsiveAppBar: React.FC = () => {
     const { isAuthenticated, logout, user } = React.useContext(AuthContext);
@@ -44,16 +44,17 @@ const ResponsiveAppBar: React.FC = () => {
     const handleSettingClick = (setting: string) => {
         if (setting === 'Logout') {
             logout();
-        }
-        if(setting === 'Profile'){
-            navigate('/profile');
-        }
-        if(setting ==='Admin'){
+        }else if(setting === 'Profile'){
+            navigate(`/user/${user.id}`);
+        }else if(setting ==='Admin'){
             navigate('/admin');
-        }
-        if(setting ==='Dashboard'){
+        }else if(setting ==='Dashboard'){
             navigate('/dashboard');
-        }
+        }else if(setting === 'My Teams'){
+            navigate('/myteams');
+        }else if(setting === 'Account')
+            navigate('/account');
+
         handleCloseUserMenu();
     };
 

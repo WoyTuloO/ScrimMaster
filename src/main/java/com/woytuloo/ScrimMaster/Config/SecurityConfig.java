@@ -87,9 +87,10 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/team", "/api/team/**","/api/user/**", "/api/auth/**", "/api/public/**").permitAll()
+                        .requestMatchers("/api/team/invitations/**").authenticated()
+                        .requestMatchers("/api/team", "/api/team/**","/api/user/**", "/api/auth/**", "/api/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/chat/**").authenticated()
-                        .requestMatchers("/api/admin/**", "/swagger-ui/**", "/v3/api-docs/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,13 +17,15 @@ public class ChatService {
     private final PublicMessageRepository publicRepo;
     private final ChatRoomRepository roomRepo;
     private final PrivateMessageRepository privateRepo;
+    private final UserService userService;
 
     public ChatService(PublicMessageRepository publicRepo,
                        ChatRoomRepository roomRepo,
-                       PrivateMessageRepository privateRepo) {
+                       PrivateMessageRepository privateRepo, UserService userService) {
         this.publicRepo  = publicRepo;
         this.roomRepo    = roomRepo;
         this.privateRepo = privateRepo;
+        this.userService = userService;
     }
 
     public Optional<ChatRoom> getChatRoomById(String id) {
@@ -52,5 +55,19 @@ public class ChatService {
         ChatRoom room = roomRepo.findById(roomId)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown room " + roomId));
         return privateRepo.save(new PrivateMessage(room, sender, content, Instant.now()));
+    }
+
+    public List<String> getParticipantsNames(String roomId) {
+        ChatRoom byChatRoomId = roomRepo.findChatRoomById(roomId);
+        return List.of(byChatRoomId.getUserA(), byChatRoomId.getUserB());
+    }
+
+    public List<ChatRoom> getUsersChatRooms(String userId) {
+        Optional<User> userById = userService.getUserById(Long.parseLong(userId));
+        if (userById.isPresent()) {
+            String username = userById.get().getUsername();
+            return roomRepo.findChatRoomsByUserAOrUserB(username, username);
+        }
+        return new ArrayList<>();
     }
 }

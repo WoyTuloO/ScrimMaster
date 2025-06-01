@@ -5,9 +5,8 @@ import {
     CircularProgress, Button
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { AuthContext } from '../assets/AuthContext'; // adjust path as needed
+import { AuthContext } from '../assets/AuthContext';
 
-// Dopasowane do backendowego UserDTO
 interface UserDTO {
     id: number;
     username: string;
@@ -52,7 +51,7 @@ const AdminPanel: React.FC = () => {
         <Box sx={{ py: 4, background: '#f5f5f5', minHeight: '100vh' }}>
             <Container>
                 <Typography variant="h4" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
-                    Panel Administratora
+                    Admin Panel
                 </Typography>
                 <Paper elevation={2}>
                     <Table>
@@ -89,7 +88,7 @@ const AdminPanel: React.FC = () => {
                                                 }
                                             }}
                                         >
-                                            Usuń
+                                            Delete
                                         </Button>
                                     </TableCell>
                                 </TableRow>

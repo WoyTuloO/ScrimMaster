@@ -7,11 +7,14 @@ import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Repositories.TeamRepository;
 import com.woytuloo.ScrimMaster.Repositories.UserRepository;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,10 +23,15 @@ import java.util.stream.Collectors;
 public class TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
+    private final TeamInvitationService teamInvitationService;
+
     @Autowired
-    public TeamService(TeamRepository teamRepository, UserRepository userRepository) {
+    public TeamService(TeamRepository teamRepository, UserRepository userRepository, UserService userService, TeamInvitationService teamInvitationService) {
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
+        this.userService = userService;
+        this.teamInvitationService = teamInvitationService;
     }
 
     public Team addTeam(Team team) {
@@ -55,26 +63,45 @@ public class TeamService {
         return null;
     }
 
+//    public TeamDTO createTeam(TeamRequest req) {
+//        User captain = userRepository.findById(req.getCaptainId())
+//                .orElseThrow(() -> new ResponseStatusException(
+//                        HttpStatus.NOT_FOUND, "Captain not found"));
+//        List<User> players = userRepository.findAllById(req.getPlayerIds());
+//        if (players.stream().noneMatch(u -> u.getId().equals(captain.getId()))) {
+//            players.add(captain);
+//        }
+//
+//        Team team = new Team();
+//        team.setTeamName(req.getTeamName());
+//        team.setCaptain(captain);
+//        team.setPlayers(players);
+//        team.setTeamRanking(req.getTeamRanking());
+//        Team saved = teamRepository.save(team);
+//
+//        return DTOMappers.mapToTeamDTO(saved);
+//    }
+
     public TeamDTO createTeam(TeamRequest req) {
         User captain = userRepository.findById(req.getCaptainId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Captain not found"));
-        // pobierz wszystkich graczy
-        List<User> players = userRepository.findAllById(req.getPlayerIds());
-        // upewnij się, że captain też jest w liście players
-        if (players.stream().noneMatch(u -> u.getId().equals(captain.getId()))) {
-            players.add(captain);
-        }
 
         Team team = new Team();
         team.setTeamName(req.getTeamName());
         team.setCaptain(captain);
-        team.setPlayers(players);
-        team.setTeamRanking(req.getTeamRanking());
+        team.setPlayers(new ArrayList<>(List.of(captain)));
+        team.setTeamRanking(1000);
         Team saved = teamRepository.save(team);
+
+        List<Long> playerIdsToInvite = req.getPlayerIds().stream()
+                .filter(id -> !id.equals(captain.getId()))
+                .toList();
+        teamInvitationService.inviteUsersToTeam(playerIdsToInvite, saved, captain);
 
         return DTOMappers.mapToTeamDTO(saved);
     }
+
 
     public TeamDTO updateTeam(TeamRequest req) {
         Optional<Team> opt = teamRepository.findById(req.getCaptainId());
@@ -95,6 +122,27 @@ public class TeamService {
 
         Team updated = teamRepository.save(team);
         return DTOMappers.mapToTeamDTO(updated);
+    }
+
+    public List<TeamDTO> getCaptainsTeams(Long id) {
+        User cpt = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND, "Captain not found"));
+        return teamRepository.findAllByCaptain_Username(cpt.getUsername()).stream().map(DTOMappers::mapToTeamDTO).collect(Collectors.toList());
+    }
+
+    public void updateTeamRanking(Team t, int i) {
+        t.setTeamRanking(i);
+        teamRepository.save(t);
+    }
+
+
+    public List<TeamDTO> getPlayerTeams() {
+        Optional<User> currentUser = userService.getCurrentUser();
+        if(currentUser.isPresent())
+            return teamRepository.findAllByPlayers_Username(currentUser.get().getUsername())
+                    .stream().map(DTOMappers::mapToTeamDTO).toList();
+
+        return null;
     }
 
 }

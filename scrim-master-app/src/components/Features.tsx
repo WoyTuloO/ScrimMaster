@@ -46,7 +46,7 @@ const FeaturesSection: React.FC = () => {
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: { xs: 'center', md: 'flex-end' } // na desktopie wyrównujemy do prawej
+                    justifyContent: { xs: 'center', md: 'flex-end' }
                 }}
             >
                 <Box

@@ -1,4 +1,3 @@
-// src/main/java/com/woytuloo/ScrimMaster/Controllers/PublicChatController.java
 package com.woytuloo.ScrimMaster.Controllers;
 
 import com.woytuloo.ScrimMaster.Records.ChatMessage;
@@ -8,6 +7,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +27,10 @@ public class PublicChatController {
     public List<ChatMessage> history(@RequestParam(defaultValue="100") int limit) {
         return chatService.getLatestPublic(limit).stream()
                 .map(m -> new ChatMessage("CHAT", m.getContent(), m.getSender()))
-                .collect(Collectors.toList());
+                .collect(Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    Collections.reverse(list);
+                    return list;})
+                );
     }
 
     @MessageMapping("/chat.public")

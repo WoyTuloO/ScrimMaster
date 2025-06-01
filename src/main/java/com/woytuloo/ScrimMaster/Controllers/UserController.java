@@ -1,8 +1,8 @@
 package com.woytuloo.ScrimMaster.Controllers;
 
-import com.woytuloo.ScrimMaster.DTO.DTOMappers;
-import com.woytuloo.ScrimMaster.DTO.UserDTO;
+import com.woytuloo.ScrimMaster.DTO.*;
 import com.woytuloo.ScrimMaster.Models.User;
+import com.woytuloo.ScrimMaster.Repositories.UserRepository;
 import com.woytuloo.ScrimMaster.Services.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,13 +17,21 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.parameters.*;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -57,7 +65,7 @@ public class UserController {
             @Parameter(name = "email",   in = ParameterIn.QUERY, description = "Adres e-mail",      example = "a@b.com")
     })
     @GetMapping()
-    public ResponseEntity<List<User>> getUsers(
+    public ResponseEntity<?> getUsers(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String email
@@ -65,7 +73,7 @@ public class UserController {
          if(id != null){
              Optional<User> userById = userService.getUserById(id);
              if(userById.isPresent())
-                 return new ResponseEntity<>(userById.stream().toList(), HttpStatus.OK);
+                 return new ResponseEntity<>(userById.stream().map(DTOMappers::mapToUserDTO).toList(), HttpStatus.OK);
              return new ResponseEntity<>(HttpStatus.NOT_FOUND);
          } else if(username != null){
             return new ResponseEntity<>(userService.getUsersByName(username), HttpStatus.OK);
@@ -121,44 +129,73 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @Operation(
-            summary = "Aktualizuj użytkownika",
-            description = "Modyfikuje istniejącego użytkownika na podstawie ID w ciele żądania.",
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = User.class))
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Zaktualizowano"),
-                    @ApiResponse(responseCode = "404", description = "Nie znaleziono")
-            }
-    )
-    @PutMapping("")
-    public ResponseEntity<User> updateUser(@org.springframework.web.bind.annotation.RequestBody User user){
-        User toUpdateUser = userService.updateUser(user);
-        if (toUpdateUser != null) {
-            return new ResponseEntity<>(toUpdateUser, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//    @Operation(
+//            summary = "Aktualizuj użytkownika",
+//            description = "Modyfikuje istniejącego użytkownika na podstawie ID w ciele żądania.",
+//            requestBody = @RequestBody(
+//                    required = true,
+//                    content = @Content(schema = @Schema(implementation = User.class))
+//            ),
+//            responses = {
+//                    @ApiResponse(responseCode = "200", description = "Zaktualizowano"),
+//                    @ApiResponse(responseCode = "404", description = "Nie znaleziono")
+//            }
+//    )
+//    @PutMapping("")
+//    public ResponseEntity<User> updateUser(@org.springframework.web.bind.annotation.RequestBody User user){
+//        User toUpdateUser = userService.updateUser(user);
+//        if (toUpdateUser != null) {
+//            return new ResponseEntity<>(toUpdateUser, HttpStatus.OK);
+//        }
+//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//
+//    }
 
+
+//    @Operation(
+//            summary = "Usuń użytkownika",
+//            description = "Usuwa użytkownika o podanym ID.",
+//            parameters = @Parameter(name = "userId", in = ParameterIn.PATH, example = "42"),
+//            responses = @ApiResponse(responseCode = "200", description = "Usunięto")
+//    )
+//    @Transactional
+//    @DeleteMapping("/users/{id}")
+//    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+//        if(userService.deleteUser(id))
+//            return ResponseEntity.ok().build();
+//
+//        return ResponseEntity.notFound().build();
+//    }
+
+    @DeleteMapping()
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user,
+                                        @Autowired UserRepository userRepo,
+                                        @Autowired HttpServletRequest request) {
+        boolean b = userService.deleteUser(user.getId());
+        if(!b)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nie znaleziono użytkownika do usunięcia");
+
+        userRepo.deleteById(user.getId());
+        request.getSession().invalidate();
+        return ResponseEntity.ok().build();
     }
 
 
-    @Operation(
-            summary = "Usuń użytkownika",
-            description = "Usuwa użytkownika o podanym ID.",
-            parameters = @Parameter(name = "userId", in = ParameterIn.PATH, example = "42"),
-            responses = @ApiResponse(responseCode = "200", description = "Usunięto")
-    )
-    @DeleteMapping("{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long userId){
-        userService.deleteUserById(userId);
-        return new ResponseEntity<>("Successfully deleted user", HttpStatus.OK);
+
+
+    @PutMapping("/nickname")
+    public ResponseEntity<?> changeUsername(@org.springframework.web.bind.annotation.RequestBody ChangeNicknameRequest body) {
+
+        return  userService.changeNickname(DTOMappers.mapToNicknameEntity(body).getNewUsername());
     }
 
-
-
-
+    @PutMapping("/password")
+    public ResponseEntity<?> changePassword(@org.springframework.web.bind.annotation.RequestBody ChangePasswordRequest body) {
+        PasswordEntity passwordEntity = DTOMappers.mapToPasswordEntity(body);
+        String currentPassword = passwordEntity.getCurrentPassword();
+        String newPassword = passwordEntity.getNewPassword();
+        return userService.changePassword(currentPassword, newPassword);
+    }
 
 
 }

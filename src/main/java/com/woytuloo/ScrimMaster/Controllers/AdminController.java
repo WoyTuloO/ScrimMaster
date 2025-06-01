@@ -23,11 +23,9 @@ import java.util.List;
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
     private final UserService userService;
-    private final UserRepository userRepo;
 
-    public AdminController(UserService userService, UserRepository userRepo) {
+    public AdminController(UserService userService) {
         this.userService = userService;
-        this.userRepo = userRepo;
     }
 
     @Operation(
@@ -54,6 +52,7 @@ public class AdminController {
                 .toList();
     }
 
+
     @Operation(
             summary = "Usuń użytkownika",
             description = "Usuwa użytkownika o podanym ID. Wymaga roli ADMIN.",
@@ -67,8 +66,7 @@ public class AdminController {
     )
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (userRepo.existsById(id)) {
-            userRepo.deleteById(id);
+        if (userService.deleteUser(id)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.notFound().build();

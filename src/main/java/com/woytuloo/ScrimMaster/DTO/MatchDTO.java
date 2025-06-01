@@ -1,15 +1,16 @@
 package com.woytuloo.ScrimMaster.DTO;
 
-import lombok.Builder;
-import lombok.Data;
 
+import java.util.Date;
+import java.util.List;
 
-@Data
-@Builder
-public class MatchDTO {
-    private Long id;
-    private TeamDTO team1;
-    private TeamDTO team2;
-    private int team1Score;
-    private int team2Score;
-}
+public record MatchDTO(
+        Long id,
+        String team1Name,
+        int team1Score,
+        String team2Name,
+        int team2Score,
+        List<PlayerStatsDto> team1Stats,
+        List<PlayerStatsDto> team2Stats,
+        String date
+) {}

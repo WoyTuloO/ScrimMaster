@@ -1,4 +1,3 @@
-// src/main/java/com/woytuloo/ScrimMaster/Repositories/PrivateMessageRepository.java
 package com.woytuloo.ScrimMaster.Repositories;
 
 import com.woytuloo.ScrimMaster.Models.PrivateMessage;

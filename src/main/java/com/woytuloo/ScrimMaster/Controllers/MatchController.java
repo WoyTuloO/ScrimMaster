@@ -33,17 +33,17 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-    @Operation(
-            summary = "Lista wszystkich meczów",
-            description = "Zwraca pełną listę meczów wraz z danymi zespołów.",
-            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
-    )
-    @GetMapping()
-    public ResponseEntity<Iterable<Match>> getAllMatches() {
-        Iterable<Match> matches = matchService.getAllMatches();
-        return new ResponseEntity<>(matches, HttpStatus.OK);
-    }
+//    @Operation(
+//            summary = "Lista wszystkich meczów",
+//            description = "Zwraca pełną listę meczów wraz z danymi zespołów.",
+//            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
+//                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
+//    )
+//    @GetMapping()
+//    public ResponseEntity<Iterable<Match>> getAllMatches() {
+//        Iterable<Match> matches = matchService.getAllMatches();
+//        return new ResponseEntity<>(matches, HttpStatus.OK);
+//    }
 
     @Operation(
             summary = "Pobierz mecz po ID",
@@ -56,12 +56,11 @@ public class MatchController {
             }
     )
     @GetMapping("{matchId}")
-    public ResponseEntity<Match> getMatchById(@PathVariable long matchId) {
-        Optional<Match> match = matchService.getMatchById(matchId);
-        if (match.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(match.get(), HttpStatus.OK);
+    public ResponseEntity<?> getMatchById(@PathVariable long matchId) {
+        return matchService.getMatchById(matchId)
+                .map(DTOMappers::mapToMatchDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/me")
@@ -84,68 +83,28 @@ public class MatchController {
     }
 
 
-    @Operation(
-            summary = "Mecze danego zespołu",
-            description = "Lista meczów, w których uczestniczy wskazany zespół.",
-            parameters = @Parameter(name = "teamId", in = ParameterIn.PATH, example = "10"),
-            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
-    )
-    @GetMapping("team/{teamId}")
-    public ResponseEntity<Iterable<Match>> getTeamMatches(@PathVariable long teamId) {
-        Iterable<Match> matches = matchService.getTeamMatches(teamId);
-        return new ResponseEntity<>(matches, HttpStatus.OK);
-    }
-
-    @Operation(
-            summary = "Dodaj mecz",
-            description = "Tworzy nowy mecz między dwoma zespołami.",
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = MatchRequest.class))
-            ),
-            responses = @ApiResponse(responseCode = "201", description = "Utworzono",
-                    content = @Content(schema = @Schema(implementation = MatchRequest.class)))
-    )
-    @PostMapping
-    public ResponseEntity<MatchDTO> addMatch(@org.springframework.web.bind.annotation.RequestBody MatchRequest req) {
-        MatchDTO created = matchService.createMatch(req);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
-    }
-
-    @Operation(
-            summary = "Usuń mecz",
-            description = "Usuwa mecz o podanym ID.",
-            parameters = @Parameter(name = "matchId", in = ParameterIn.PATH, example = "55"),
-            responses = @ApiResponse(responseCode = "200", description = "Usunięto mecz")
-    )
-    @DeleteMapping("{matchId}")
-    public ResponseEntity<String> deleteMatch(@PathVariable int matchId) {
-        long l = matchService.deleteMatch(matchId);
-        return new ResponseEntity<>("Match deleted", HttpStatus.OK);
-    }
-
-
-    @Operation(
-            summary = "Aktualizuj mecz",
-            description = "Aktualizuje datę, wynik lub przypisane zespoły istniejącego meczu.",
-            requestBody = @RequestBody(
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = MatchRequest.class))
-            ),
-            responses = @ApiResponse(responseCode = "200", description = "Zaktualizowano")
-    )
-    @PutMapping
-    public ResponseEntity<MatchDTO> updateMatch(@org.springframework.web.bind.annotation.RequestBody MatchRequest req) {
-        MatchDTO updated = matchService.updateMatch(req);
-        if (updated == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return ResponseEntity.ok(updated);
-    }
-
-
-
-
-
+//    @Operation(
+//            summary = "Mecze danego zespołu",
+//            description = "Lista meczów, w których uczestniczy wskazany zespół.",
+//            parameters = @Parameter(name = "teamId", in = ParameterIn.PATH, example = "10"),
+//            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
+//                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
+//    )
+//    @GetMapping("team/{teamId}")
+//    public ResponseEntity<Iterable<Match>> getTeamMatches(@PathVariable long teamId) {
+//        Iterable<Match> matches = matchService.getTeamMatches(teamId);
+//        return new ResponseEntity<>(matches, HttpStatus.OK);
+//    }
+//
+//    @Operation(
+//            summary = "Usuń mecz",
+//            description = "Usuwa mecz o podanym ID.",
+//            parameters = @Parameter(name = "matchId", in = ParameterIn.PATH, example = "55"),
+//            responses = @ApiResponse(responseCode = "200", description = "Usunięto mecz")
+//    )
+//    @DeleteMapping("{matchId}")
+//    public ResponseEntity<String> deleteMatch(@PathVariable int matchId) {
+//        long l = matchService.deleteMatch(matchId);
+//        return new ResponseEntity<>("Match deleted", HttpStatus.OK);
+//    }
 }
