@@ -82,4 +82,12 @@ public class DTOMappers {
     }
 
 
+    public static NicknameEntity mapToNicknameEntity(ChangeNicknameRequest req) {
+        return new NicknameEntity(req.getNewUsername());
+    }
+
+    public static PasswordEntity mapToPasswordEntity(ChangePasswordRequest req) {
+        return new PasswordEntity(req.getCurrentPassword(), req.getNewPassword());
+    }
+
 }
