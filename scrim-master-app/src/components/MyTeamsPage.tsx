@@ -41,16 +41,22 @@ const MyTeamsPage: React.FC = () => {
     }, []);
 
     useEffect(() => {
+
         fetch("http://localhost:8080/api/team/invitations/pending", { credentials: "include" })
             .then(res => {
                 if (!res.ok) return [];
+
                 return res.json();
             })
             .then((data) => {
                 setInvitations(Array.isArray(data) ? data : []);
+                console.log(data);
+
             })
-            .catch(() => setInvitations([]))
+            .catch(() => {setInvitations([]);
+        })
             .finally(() => setLoadingInv(false));
+
     }, []);
 
     const handleAccept = (invId: number) => {
@@ -66,6 +72,7 @@ const MyTeamsPage: React.FC = () => {
             method: "POST", credentials: "include"
         }).then(() => {
             setInvitations(prev => prev.filter(inv => inv.id !== invId));
+
         });
     };
 
@@ -74,23 +81,40 @@ const MyTeamsPage: React.FC = () => {
     }
 
     return (
-        <Box sx={{ minHeight: '100vh', background: '#f5f5f5', py: 6 }}>
+        <Box
+            sx={{
+                opacity: 0,
+                animation: 'fadeIn 1s forwards',
+                '@keyframes fadeIn': {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 },
+                },
+                height: '100vh',
+                background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/../../public/img1.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                display: 'flex',
+                alignItems: 'center',
+            }}
+        >
             <Container maxWidth="md">
 
                 <Paper elevation={3} sx={{ p: 2, mb: 3 }}>
-                    <Typography variant="h6" sx={{ mb: 2 }}>Zaproszenia do drużyny</Typography>
-                    {loadingInv ? (
+                    <Typography variant="h6" sx={{ mb: 2 }}>Team Invitations</Typography>
+                    {
+                        loadingInv ? (
                         <CircularProgress />
                     ) : Array.isArray(invitations) && invitations.length === 0 ? (
-                        <Typography>Brak zaproszeń.</Typography>
+                        <Typography>There are no invitations.</Typography>
                     ) : (
                         Array.isArray(invitations) && invitations.map(inv => (
                             <Box key={inv.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                                 <Typography sx={{ flex: 1 }}>
-                                    Zaproszenie do <strong>{inv.teamName}</strong> (Kapitan: {inv.captainName})
+                                    Invite from <strong>{inv.teamName}</strong> (Captain: {inv.captainName})
                                 </Typography>
-                                <Button onClick={() => handleAccept(inv.id)} size="small" color="primary" variant="contained" sx={{ mr: 1 }}>Akceptuj</Button>
-                                <Button onClick={() => handleDecline(inv.id)} size="small" color="error" variant="outlined">Odrzuć</Button>
+                                <Button onClick={() => handleAccept(inv.id)} size="small" color="primary" variant="contained" sx={{ mr: 1 }}>Accept</Button>
+                                <Button onClick={() => handleDecline(inv.id)} size="small" color="error" variant="outlined">Decline</Button>
                             </Box>
                         ))
                     )}
@@ -99,28 +123,28 @@ const MyTeamsPage: React.FC = () => {
                 <Paper elevation={4} sx={{ p: 4, mb: 4 }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
                         <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontWeight: 700 }}>
-                            Moje drużyny
+                            My Teams
                         </Typography>
                         <Button
                             variant="contained"
                             color="secondary"
                             onClick={() => navigate('/teams/create')}
                         >
-                            Stwórz nową drużynę
+                            Create new team
                         </Button>
                     </Box>
                     {error && <Typography color="error">{error}</Typography>}
                     {teams.length === 0 ? (
-                        <Typography>Nie jesteś jeszcze w żadnej drużynie.</Typography>
+                        <Typography>You are not part of any team yet.</Typography>
                     ) : (
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Nazwa drużyny</TableCell>
-                                    <TableCell>Kapitán</TableCell>
-                                    <TableCell>Zawodnicy</TableCell>
+                                    <TableCell>Team name</TableCell>
+                                    <TableCell>Captain</TableCell>
+                                    <TableCell>Players</TableCell>
                                     <TableCell>Ranking</TableCell>
-                                    <TableCell align="right">Akcje</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
