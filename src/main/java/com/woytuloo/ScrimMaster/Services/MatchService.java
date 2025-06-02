@@ -22,39 +22,19 @@ import java.util.stream.Collectors;
 @Service
 public class MatchService {
 
-    @Autowired
     private UserService userService;
-
     private final MatchRepository matchRepository;
-    private final TeamRepository teamRepository;
-    @Autowired
     private TeamService teamService;
-    @Autowired
-    private ChatService chatService;
 
     @Autowired
-    public MatchService(MatchRepository matchRepository,
-                        TeamRepository teamRepository) {
+    public MatchService(UserService userService, MatchRepository matchRepository, TeamService teamService) {
+        this.userService = userService;
         this.matchRepository = matchRepository;
-        this.teamRepository = teamRepository;
-    }
-
-
-    public List<Match> getAllMatches() {
-        return matchRepository.findAll();
+        this.teamService = teamService;
     }
 
     public Optional<Match> getMatchById(long id) {
         return matchRepository.findById(id);
-    }
-
-    public List<Match> getTeamMatches(long teamId){
-        Optional<Team> teamOptional = teamRepository.findById(teamId);
-        if(teamOptional.isPresent()) {
-            String teamName = teamOptional.get().getTeamName();
-            return matchRepository.findAll().stream().filter(m -> m.getTeam1Name().equals(teamName) || m.getTeam2Name().equals(teamName)).collect(Collectors.toList());
-        }
-        return null;
     }
 
     @Transactional
@@ -111,10 +91,6 @@ public class MatchService {
         return matchRepository.save(match);
     }
 
-    public long deleteMatch(long id) {
-        matchRepository.deleteById(id);
-        return id;
-    }
 
     public List<Match> getUserMatches() {
         Optional<User> currentUser = userService.getCurrentUser();
