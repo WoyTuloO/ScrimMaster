@@ -57,11 +57,6 @@ public class ChatService {
         return privateRepo.save(new PrivateMessage(room, sender, content, Instant.now()));
     }
 
-    public List<String> getParticipantsNames(String roomId) {
-        ChatRoom byChatRoomId = roomRepo.findChatRoomById(roomId);
-        return List.of(byChatRoomId.getUserA(), byChatRoomId.getUserB());
-    }
-
     public List<ChatRoom> getUsersChatRooms(String userId) {
         Optional<User> userById = userService.getUserById(Long.parseLong(userId));
         if (userById.isPresent()) {
