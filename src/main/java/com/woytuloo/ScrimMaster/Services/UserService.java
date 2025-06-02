@@ -39,8 +39,8 @@ public class UserService {
         return new ArrayList<>(userRepository.findByEmailContainingIgnoreCase(email));
     }
 
-    public void deleteUserByUsername(String name) {
-        userRepository.deleteByUsername(name);
+    public int deleteUserByUsername(String name) {
+        return userRepository.deleteByUsername(name);
     }
 
     public void deleteUserById(Long id) {
@@ -124,8 +124,8 @@ public class UserService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 //            user.setDeleted(true);
-            user.setUsername("User Deleted");
-            user.setEmail("deleted_" + user.getId() + "@example.com");
+            user.setUsername("User_Deleted_" + UUID.randomUUID());
+            user.setEmail("deleted_" + user.getId() + "_" + UUID.randomUUID() + "@example.com");
             userRepository.save(user);
             return true;
         }
