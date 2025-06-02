@@ -1,6 +1,5 @@
 package com.woytuloo.ScrimMaster.Services;
 
-import com.woytuloo.ScrimMaster.DTO.MatchProposalDTO;
 import com.woytuloo.ScrimMaster.DTO.MatchProposalRequest;
 import com.woytuloo.ScrimMaster.DTO.PlayerStatsRequest;
 import com.woytuloo.ScrimMaster.Models.*;
