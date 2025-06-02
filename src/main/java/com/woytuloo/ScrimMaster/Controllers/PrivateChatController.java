@@ -3,6 +3,13 @@ package com.woytuloo.ScrimMaster.Controllers;
 import com.woytuloo.ScrimMaster.Models.ChatRoom;
 import com.woytuloo.ScrimMaster.Records.ChatMessage;
 import com.woytuloo.ScrimMaster.Services.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,6 +37,19 @@ public class PrivateChatController {
         this.messagingTemplate = messagingTemplate;
     }
 
+
+    @Operation(
+            summary = "Pobierz historię prywatnego czatu",
+            description = "Zwraca listę ostatnich wiadomości z prywatnego pokoju czatu. Użytkownik musi być uczestnikiem pokoju. Limit domyślnie 100.",
+            parameters = {
+                    @Parameter(name = "roomId", in = ParameterIn.PATH, required = true, description = "ID pokoju czatu"),
+                    @Parameter(name = "limit", in = ParameterIn.QUERY, required = false, description = "Limit wiadomości (domyślnie 100)")
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista wiadomości czatu", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ChatMessage.class)))),
+                    @ApiResponse(responseCode = "403", description = "Brak dostępu do tego pokoju")
+            }
+    )
     @GetMapping("/{roomId}")
     public List<ChatMessage> getHistory(
             @PathVariable String roomId,
