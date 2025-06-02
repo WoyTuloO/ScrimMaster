@@ -15,7 +15,7 @@ public class TeamInvitation {
     private User invitedUser;
 
     @ManyToOne(optional = false)
-    private User invitedBy; // kapitan
+    private User invitedBy;
 
     @ManyToOne(optional = false)
     private Team team;
