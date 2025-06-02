@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 @CrossOrigin(origins = "*")
@@ -80,7 +82,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         User user = userRepo.findByUsername(creds.getUsername())
-                .orElseThrow(() -> new RuntimeException("Użytkownik nie istnieje"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
         List<String> roles = List.of(user.getRole());
 
@@ -110,7 +112,7 @@ public class AuthController {
 
         RefreshToken stored = refreshSvc.verifyExpiration(
                 refreshSvc.findByToken(rt)
-                        .orElseThrow(() -> new RuntimeException("Brak refresh tokena")));
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Brak refresh tokena")));
 
         User user = stored.getUser();
         List<String> roles = List.of(user.getRole());
@@ -161,7 +163,7 @@ public class AuthController {
 
         clearCookie(res, "refreshToken", "/api/auth", true);
         clearCookie(res, "refreshToken", "/api/auth", false);
-        clearCookie(res, "refreshToken", "/api/auth/refresh", true); // legacy
+        clearCookie(res, "refreshToken", "/api/auth/refresh", true);
         clearCookie(res, "refreshToken", "/api/auth/refresh", false);
 
         return ResponseEntity.ok("Wylogowano");
