@@ -48,12 +48,28 @@ const AdminPanel: React.FC = () => {
     }
 
     return (
-        <Box sx={{ py: 4, background: '#f5f5f5', minHeight: '100vh' }}>
+        <Box
+            sx={{
+                opacity: 0,
+                animation: 'fadeIn 1s forwards',
+                '@keyframes fadeIn': {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 }
+                },
+                height: '100vh',
+                background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(/../../public/img1.jpg)`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                display: 'flex',
+                alignItems: 'center'
+            }}
+        >
             <Container>
-                <Typography variant="h4" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
-                    Admin Panel
-                </Typography>
-                <Paper elevation={2}>
+                <Paper elevation={2} sx={{ p:4 }}>
+                    <Typography variant="h4" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
+                        Admin Panel
+                    </Typography>
                     <Table>
                         <TableHead>
                             <TableRow>
