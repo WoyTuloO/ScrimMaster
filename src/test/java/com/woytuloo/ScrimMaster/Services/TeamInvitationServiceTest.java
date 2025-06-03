@@ -84,7 +84,7 @@ class TeamInvitationServiceTest {
 
         TeamInvitation invitation = new TeamInvitation();
         invitation.setId(2L);
-        invitation.setInvitedUser(another); // not current user!
+        invitation.setInvitedUser(another);
         invitation.setTeam(team);
         invitation.setStatus(InvitationStatus.PENDING);
 
@@ -94,7 +94,7 @@ class TeamInvitationServiceTest {
         assertThrows(RuntimeException.class, () -> service.acceptInvitation(2L));
 
         invitation.setInvitedUser(user);
-        invitation.setStatus(InvitationStatus.ACCEPTED); // not PENDING
+        invitation.setStatus(InvitationStatus.ACCEPTED);
         assertThrows(RuntimeException.class, () -> service.acceptInvitation(2L));
     }
 
@@ -140,7 +140,7 @@ class TeamInvitationServiceTest {
 
         TeamInvitation invitation = new TeamInvitation();
         invitation.setId(4L);
-        invitation.setInvitedUser(another); // wrong user!
+        invitation.setInvitedUser(another);
         invitation.setStatus(InvitationStatus.PENDING);
 
         when(userService.getCurrentUser()).thenReturn(Optional.of(user));
@@ -149,7 +149,7 @@ class TeamInvitationServiceTest {
         assertThrows(RuntimeException.class, () -> service.declineInvitation(4L));
 
         invitation.setInvitedUser(user);
-        invitation.setStatus(InvitationStatus.DECLINED); // not pending
+        invitation.setStatus(InvitationStatus.DECLINED);
         assertThrows(RuntimeException.class, () -> service.declineInvitation(4L));
     }
 

@@ -1,4 +1,3 @@
-// src/main/java/com/woytuloo/ScrimMaster/Controllers/ChatRequestController.java
 package com.woytuloo.ScrimMaster.Controllers;
 
 import com.woytuloo.ScrimMaster.Records.ChatRequest;
