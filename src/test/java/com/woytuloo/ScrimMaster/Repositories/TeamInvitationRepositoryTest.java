@@ -1,7 +1,6 @@
 package com.woytuloo.ScrimMaster.Repositories;
 
-import com.woytuloo.ScrimMaster.Models.Team;
-import com.woytuloo.ScrimMaster.Models.User;
+import com.woytuloo.ScrimMaster.Models.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,8 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class TeamRepositoryTest {
+class TeamInvitationRepositoryTest {
 
+    @Autowired
+    private TeamInvitationRepository invitationRepository;
     @Autowired
     private TeamRepository teamRepository;
     @Autowired
@@ -36,55 +36,42 @@ class TeamRepositoryTest {
         postgres.start();
     }
     @DynamicPropertySource
-    static void configureProps(DynamicPropertyRegistry reg) {
+    static void configure(DynamicPropertyRegistry reg) {
         reg.add("spring.datasource.url", postgres::getJdbcUrl);
         reg.add("spring.datasource.username", postgres::getUsername);
         reg.add("spring.datasource.password", postgres::getPassword);
     }
 
-    private User captain;
-    private User player;
+    private Team team;
+    private User captain, invited;
 
     @BeforeEach
     void setUp() {
-        captain = new User("cpt", "123", "cpt@cpt.pl");
-        player = new User("gracz", "pwd", "gracz@xd.pl");
-        userRepository.saveAll(List.of(captain, player));
-
-        Team team = new Team("TeamX", captain);
-        team.getPlayers().add(player);
-        team.setTeamRanking(1234);
+        captain = new User("kapitan", "haslo", "k@t.pl");
+        invited = new User("zaproszony", "haslo", "z@t.pl");
+        userRepository.saveAll(List.of(captain, invited));
+        team = new Team("TeamI", captain);
         teamRepository.save(team);
+
+        TeamInvitation inv = new TeamInvitation();
+        inv.setTeam(team);
+        inv.setInvitedBy(captain);
+        inv.setInvitedUser(invited);
+        inv.setStatus(InvitationStatus.PENDING);
+        invitationRepository.save(inv);
     }
 
     @AfterEach
     void tearDown() {
+        invitationRepository.deleteAll();
         teamRepository.deleteAll();
         userRepository.deleteAll();
     }
 
     @Test
-    void findByTeamName_exists() {
-        Optional<Team> team = teamRepository.findByTeamName("TeamX");
-        assertThat(team).isPresent();
-        assertThat(team.get().getCaptain().getUsername()).isEqualTo("cpt");
-    }
-
-    @Test
-    void findByTeamName_notExists() {
-        assertThat(teamRepository.findByTeamName("Nope")).isNotPresent();
-    }
-
-    @Test
-    void findAllByCaptain_Username() {
-        List<Team> teams = teamRepository.findAllByCaptain_Username("cpt");
-        assertThat(teams).hasSize(1);
-    }
-
-    @Test
-    void findAllByPlayers_Username() {
-        List<Team> teams = teamRepository.findAllByPlayers_Username("gracz");
-        assertThat(teams).hasSize(1);
-        assertThat(teams.getFirst().getTeamName()).isEqualTo("TeamX");
+    void findByInvitedUserAndStatus() {
+        List<TeamInvitation> invs = invitationRepository.findByInvitedUserAndStatus(invited, InvitationStatus.PENDING);
+        assertThat(invs).hasSize(1);
+        assertThat(invs.get(0).getInvitedBy().getUsername()).isEqualTo("kapitan");
     }
 }

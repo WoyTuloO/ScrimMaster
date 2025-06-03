@@ -89,7 +89,10 @@ public class TeamController {
     @PostMapping
     public ResponseEntity<TeamDTO> addTeam(@org.springframework.web.bind.annotation.RequestBody TeamRequest req) {
         TeamDTO created = teamService.createTeam(req);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        if(created == null)
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        else
+            return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
 

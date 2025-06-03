@@ -7,6 +7,7 @@ import com.woytuloo.ScrimMaster.Models.Team;
 import com.woytuloo.ScrimMaster.Models.User;
 import com.woytuloo.ScrimMaster.Repositories.TeamRepository;
 import com.woytuloo.ScrimMaster.Repositories.UserRepository;
+import lombok.Data;
 import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -63,24 +64,6 @@ public class TeamService {
         return null;
     }
 
-//    public TeamDTO createTeam(TeamRequest req) {
-//        User captain = userRepository.findById(req.getCaptainId())
-//                .orElseThrow(() -> new ResponseStatusException(
-//                        HttpStatus.NOT_FOUND, "Captain not found"));
-//        List<User> players = userRepository.findAllById(req.getPlayerIds());
-//        if (players.stream().noneMatch(u -> u.getId().equals(captain.getId()))) {
-//            players.add(captain);
-//        }
-//
-//        Team team = new Team();
-//        team.setTeamName(req.getTeamName());
-//        team.setCaptain(captain);
-//        team.setPlayers(players);
-//        team.setTeamRanking(req.getTeamRanking());
-//        Team saved = teamRepository.save(team);
-//
-//        return DTOMappers.mapToTeamDTO(saved);
-//    }
 
     public TeamDTO createTeam(TeamRequest req) {
         User captain = userRepository.findById(req.getCaptainId())
@@ -92,8 +75,12 @@ public class TeamService {
         team.setCaptain(captain);
         team.setPlayers(new ArrayList<>(List.of(captain)));
         team.setTeamRanking(1000);
-        Team saved = teamRepository.save(team);
-
+        Team saved;
+        try {
+            saved = teamRepository.save(team);
+        }catch(Exception e){
+            return null;
+        }
         List<Long> playerIdsToInvite = req.getPlayerIds().stream()
                 .filter(id -> !id.equals(captain.getId()))
                 .toList();
@@ -118,7 +105,6 @@ public class TeamService {
             players.add(captain);
         }
         team.setPlayers(players);
-        team.setTeamRanking(req.getTeamRanking());
 
         Team updated = teamRepository.save(team);
         return DTOMappers.mapToTeamDTO(updated);

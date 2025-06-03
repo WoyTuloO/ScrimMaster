@@ -1,6 +1,6 @@
 package com.woytuloo.ScrimMaster.Repositories;
 
-import com.woytuloo.ScrimMaster.Models.Team;
+import com.woytuloo.ScrimMaster.Models.RefreshToken;
 import com.woytuloo.ScrimMaster.Models.User;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 
-import java.util.List;
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,10 +21,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class TeamRepositoryTest {
+class RefreshTokenRepositoryTest {
 
     @Autowired
-    private TeamRepository teamRepository;
+    private RefreshTokenRepository refreshTokenRepository;
     @Autowired
     private UserRepository userRepository;
 
@@ -36,55 +36,41 @@ class TeamRepositoryTest {
         postgres.start();
     }
     @DynamicPropertySource
-    static void configureProps(DynamicPropertyRegistry reg) {
+    static void configure(DynamicPropertyRegistry reg) {
         reg.add("spring.datasource.url", postgres::getJdbcUrl);
         reg.add("spring.datasource.username", postgres::getUsername);
         reg.add("spring.datasource.password", postgres::getPassword);
     }
 
-    private User captain;
-    private User player;
+    private User user;
 
     @BeforeEach
     void setUp() {
-        captain = new User("cpt", "123", "cpt@cpt.pl");
-        player = new User("gracz", "pwd", "gracz@xd.pl");
-        userRepository.saveAll(List.of(captain, player));
-
-        Team team = new Team("TeamX", captain);
-        team.getPlayers().add(player);
-        team.setTeamRanking(1234);
-        teamRepository.save(team);
+        user = new User("rtuser", "secret", "rt@ex.com");
+        userRepository.save(user);
+        RefreshToken token = new RefreshToken();
+        token.setUser(user);
+        token.setExpiryDate(Instant.now().plusSeconds(3600));
+        token.setToken("sometoken");
+        refreshTokenRepository.save(token);
     }
 
     @AfterEach
     void tearDown() {
-        teamRepository.deleteAll();
+        refreshTokenRepository.deleteAll();
         userRepository.deleteAll();
     }
 
     @Test
-    void findByTeamName_exists() {
-        Optional<Team> team = teamRepository.findByTeamName("TeamX");
-        assertThat(team).isPresent();
-        assertThat(team.get().getCaptain().getUsername()).isEqualTo("cpt");
+    void findByToken_existing() {
+        Optional<RefreshToken> t = refreshTokenRepository.findByToken("sometoken");
+        assertThat(t).isPresent();
+        assertThat(t.get().getUser().getUsername()).isEqualTo("rtuser");
     }
 
     @Test
-    void findByTeamName_notExists() {
-        assertThat(teamRepository.findByTeamName("Nope")).isNotPresent();
-    }
-
-    @Test
-    void findAllByCaptain_Username() {
-        List<Team> teams = teamRepository.findAllByCaptain_Username("cpt");
-        assertThat(teams).hasSize(1);
-    }
-
-    @Test
-    void findAllByPlayers_Username() {
-        List<Team> teams = teamRepository.findAllByPlayers_Username("gracz");
-        assertThat(teams).hasSize(1);
-        assertThat(teams.getFirst().getTeamName()).isEqualTo("TeamX");
+    void deleteByUser() {
+        refreshTokenRepository.deleteByUser(user);
+        assertThat(refreshTokenRepository.findAll()).isEmpty();
     }
 }

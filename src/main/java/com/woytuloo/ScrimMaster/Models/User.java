@@ -3,9 +3,6 @@ package com.woytuloo.ScrimMaster.Models;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @Entity

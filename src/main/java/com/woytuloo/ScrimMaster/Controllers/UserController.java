@@ -168,14 +168,13 @@ public class UserController {
 //    }
 
     @DeleteMapping()
-    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal User user,
-                                        @Autowired UserRepository userRepo,
-                                        @Autowired HttpServletRequest request) {
-        boolean b = userService.deleteUser(user.getId());
-        if(!b)
+    public ResponseEntity<?> deleteUser(@AuthenticationPrincipal org.springframework.security.core.userdetails.User user,
+                                        HttpServletRequest request) {
+        String username = user.getUsername();
+        int cnt = userService.deleteUserByUsername(username);
+        if(cnt == 0)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Nie znaleziono użytkownika do usunięcia");
 
-        userRepo.deleteById(user.getId());
         request.getSession().invalidate();
         return ResponseEntity.ok().build();
     }
