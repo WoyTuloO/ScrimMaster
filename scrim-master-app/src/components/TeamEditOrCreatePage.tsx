@@ -42,19 +42,16 @@ const TeamEditOrCreatePage: React.FC = () => {
     const { user } = useAuth();
     const isEdit = !!teamId;
 
-    // Najpierw ładujemy użytkowników
     useEffect(() => {
         setLoading(true);
         fetch("http://localhost:8080/api/user", { credentials: "include" })
             .then(res => res.json())
             .then((users: UserDTO[]) => {
                 setAllUsers(users);
-                // Po pobraniu użytkowników, jeśli edytujemy - pobierz drużynę
                 if (isEdit) {
                     fetch(`http://localhost:8080/api/team?teamId=${teamId}`, { credentials: "include" })
                         .then(res => res.json())
                         .then((data: TeamDTO) => {
-                            // Upewnij się, że przypisujesz istniejących users
                             const playerList = data.players.map(
                                 p => users.find(u => u.id === p.id) || p
                             );

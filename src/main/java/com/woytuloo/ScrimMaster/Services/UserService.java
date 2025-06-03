@@ -123,7 +123,6 @@ public class UserService {
         Optional<User> userOpt = userRepository.findById(id);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-//            user.setDeleted(true);
             user.setUsername("User_Deleted_" + UUID.randomUUID());
             user.setEmail("deleted_" + user.getId() + "_" + UUID.randomUUID() + "@example.com");
             userRepository.save(user);

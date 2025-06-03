@@ -50,7 +50,6 @@ const MyTeamsPage: React.FC = () => {
             })
             .then((data) => {
                 setInvitations(Array.isArray(data) ? data : []);
-                console.log(data);
 
             })
             .catch(() => {setInvitations([]);
@@ -64,6 +63,15 @@ const MyTeamsPage: React.FC = () => {
             method: "POST", credentials: "include"
         }).then(() => {
             setInvitations(prev => prev.filter(inv => inv.id !== invId));
+
+            fetch("http://localhost:8080/api/team/me", { credentials: "include" })
+                .then(res => {
+                    if (!res.ok) throw new Error('Błąd pobierania drużyn');
+                    return res.json();
+                })
+                .then((data: TeamDTO[]) => setTeams(data))
+                .catch(e => setError(e.message))
+                .finally(() => setLoading(false));
         });
     };
 

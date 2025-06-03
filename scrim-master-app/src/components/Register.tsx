@@ -80,7 +80,6 @@ function Register() {
             setTimeout(() => navigate('/login'), 1500);
 
         } catch (error: any) {
-            console.error("Wystąpił błąd:", error.message);
             setSnackbar({
                 open: true,
                 message: error.message,

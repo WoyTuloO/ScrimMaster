@@ -33,17 +33,7 @@ public class MatchController {
         this.matchService = matchService;
     }
 
-//    @Operation(
-//            summary = "Lista wszystkich meczów",
-//            description = "Zwraca pełną listę meczów wraz z danymi zespołów.",
-//            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
-//                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
-//    )
-//    @GetMapping()
-//    public ResponseEntity<Iterable<Match>> getAllMatches() {
-//        Iterable<Match> matches = matchService.getAllMatches();
-//        return new ResponseEntity<>(matches, HttpStatus.OK);
-//    }
+
 
     @Operation(
             summary = "Pobierz mecz po ID",
@@ -82,29 +72,4 @@ public class MatchController {
         }
     }
 
-
-//    @Operation(
-//            summary = "Mecze danego zespołu",
-//            description = "Lista meczów, w których uczestniczy wskazany zespół.",
-//            parameters = @Parameter(name = "teamId", in = ParameterIn.PATH, example = "10"),
-//            responses = @ApiResponse(responseCode = "200", description = "Lista meczów",
-//                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = Match.class))))
-//    )
-//    @GetMapping("team/{teamId}")
-//    public ResponseEntity<Iterable<Match>> getTeamMatches(@PathVariable long teamId) {
-//        Iterable<Match> matches = matchService.getTeamMatches(teamId);
-//        return new ResponseEntity<>(matches, HttpStatus.OK);
-//    }
-//
-//    @Operation(
-//            summary = "Usuń mecz",
-//            description = "Usuwa mecz o podanym ID.",
-//            parameters = @Parameter(name = "matchId", in = ParameterIn.PATH, example = "55"),
-//            responses = @ApiResponse(responseCode = "200", description = "Usunięto mecz")
-//    )
-//    @DeleteMapping("{matchId}")
-//    public ResponseEntity<String> deleteMatch(@PathVariable int matchId) {
-//        long l = matchService.deleteMatch(matchId);
-//        return new ResponseEntity<>("Match deleted", HttpStatus.OK);
-//    }
 }

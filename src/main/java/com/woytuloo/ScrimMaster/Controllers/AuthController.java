@@ -122,20 +122,6 @@ public class AuthController {
         return ResponseEntity.ok("Token odświeżony");
     }
 
-//    @Operation(
-//            summary = "Informacja o bieżącym zalogowanym użytkowniku",
-//            description = "Zwraca nazwę zalogowanego użytkownika na podstawie informacji z JWT w nagłówku Authorization.",
-//            security = @SecurityRequirement(name = "bearer-jwt"),
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "Nazwa użytkownika",
-//                            content = @Content(schema = @Schema(implementation = String.class))),
-//                    @ApiResponse(responseCode = "401", description = "Brak autoryzacji")
-//            }
-//    )
-//    @GetMapping("/me")
-//    public ResponseEntity<String> me(Authentication auth) {
-//        return ResponseEntity.ok(auth.getName());
-//    }
 
     @Operation(
             summary = "Wylogowanie (kasuje tokeny i cookie)",

@@ -108,7 +108,6 @@ const Dashboard: React.FC = () => {
                 }
                 if (mounted) setMatches(matchData);
             } catch (e: any) {
-                console.error(e);
                 if (mounted) {
                     setError(e.message || 'Coś poszło nie tak');
                 }

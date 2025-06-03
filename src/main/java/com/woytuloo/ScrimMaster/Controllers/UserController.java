@@ -124,48 +124,9 @@ public class UserController {
     )
     @PostMapping
     public ResponseEntity<User> addUser(@org.springframework.web.bind.annotation.RequestBody User user){
-        System.out.println(user.toString());
         User createdUser = userService.addUser(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
-
-//    @Operation(
-//            summary = "Aktualizuj użytkownika",
-//            description = "Modyfikuje istniejącego użytkownika na podstawie ID w ciele żądania.",
-//            requestBody = @RequestBody(
-//                    required = true,
-//                    content = @Content(schema = @Schema(implementation = User.class))
-//            ),
-//            responses = {
-//                    @ApiResponse(responseCode = "200", description = "Zaktualizowano"),
-//                    @ApiResponse(responseCode = "404", description = "Nie znaleziono")
-//            }
-//    )
-//    @PutMapping("")
-//    public ResponseEntity<User> updateUser(@org.springframework.web.bind.annotation.RequestBody User user){
-//        User toUpdateUser = userService.updateUser(user);
-//        if (toUpdateUser != null) {
-//            return new ResponseEntity<>(toUpdateUser, HttpStatus.OK);
-//        }
-//        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//
-//    }
-
-
-//    @Operation(
-//            summary = "Usuń użytkownika",
-//            description = "Usuwa użytkownika o podanym ID.",
-//            parameters = @Parameter(name = "userId", in = ParameterIn.PATH, example = "42"),
-//            responses = @ApiResponse(responseCode = "200", description = "Usunięto")
-//    )
-//    @Transactional
-//    @DeleteMapping("/users/{id}")
-//    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-//        if(userService.deleteUser(id))
-//            return ResponseEntity.ok().build();
-//
-//        return ResponseEntity.notFound().build();
-//    }
 
     @DeleteMapping()
     public ResponseEntity<?> deleteUser(@AuthenticationPrincipal org.springframework.security.core.userdetails.User user,

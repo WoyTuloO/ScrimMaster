@@ -25,7 +25,6 @@ public class MatchProposalController {
 
     @PostMapping("/submit")
     public ResponseEntity<?> addProposal(@RequestBody MatchProposalRequest request) {
-        System.out.println(request);
 
         try{
             ProposalStatus status = matchProposalService.addProposal(request);

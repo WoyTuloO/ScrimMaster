@@ -36,7 +36,6 @@ const AccountPage: React.FC = () => {
                 body: JSON.stringify({ newUsername: newUsername })
             });
             if (res.ok) {
-                console.log(res.body);
                 setSnackbar({ open: true, message: "Zmieniono nazwę użytkownika!", severity: "success" });
                 setOpenNickname(false);
             } else {

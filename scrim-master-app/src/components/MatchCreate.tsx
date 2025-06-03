@@ -44,10 +44,8 @@ export default function MatchCreate() {
 
     useEffect(() => {
         if (!user) return;
-        console.log(user.id);
         authFetch(`http://localhost:8080/api/team/${user.id}`)
             .then(res => {
-                console.log(res);
 
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 return res.json();
@@ -101,7 +99,6 @@ export default function MatchCreate() {
             }))
         };
         try {
-            console.log(JSON.stringify(payload));
             const res = await authFetch(
 
                 `http://localhost:8080/api/match/proposal/submit`,

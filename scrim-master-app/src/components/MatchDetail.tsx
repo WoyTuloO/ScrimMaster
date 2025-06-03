@@ -58,7 +58,6 @@ interface TeamStatsProps {
 const TeamStats: React.FC<TeamStatsProps> = ({ teamName, stats }) => {
     const [open, setOpen] = useState(false);
 
-    console.log(stats);
     return (
         <React.Fragment>
             <Box
@@ -133,7 +132,6 @@ const MatchDetail: React.FC = () => {
                 const data: MatchDTO = await res.json();
                 setMatch(data);
             } catch (e: any) {
-                console.error(e);
                 setError(e.message || 'Nie udało się załadować meczu');
             } finally {
                 setLoading(false);
