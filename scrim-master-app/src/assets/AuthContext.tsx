@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const navigate = useNavigate();
 
     const location = useLocation();
-    const publicRoutes = ['/login', '/register', '/players', '/scrims','/teams'];
+    const publicRoutes = ['/login', '/register', '/players', '/scrims','/teams', '/'];
 
     const navigateOnUnauth = useCallback(() => {
         if (!publicRoutes.includes(location.pathname)) {
