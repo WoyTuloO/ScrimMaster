@@ -75,8 +75,12 @@ public class TeamService {
         team.setCaptain(captain);
         team.setPlayers(new ArrayList<>(List.of(captain)));
         team.setTeamRanking(1000);
-        Team saved = teamRepository.save(team);
-
+        Team saved;
+        try {
+            saved = teamRepository.save(team);
+        }catch(Exception e){
+            return null;
+        }
         List<Long> playerIdsToInvite = req.getPlayerIds().stream()
                 .filter(id -> !id.equals(captain.getId()))
                 .toList();
@@ -101,7 +105,6 @@ public class TeamService {
             players.add(captain);
         }
         team.setPlayers(players);
-        team.setTeamRanking(req.getTeamRanking());
 
         Team updated = teamRepository.save(team);
         return DTOMappers.mapToTeamDTO(updated);
