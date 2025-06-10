@@ -62,7 +62,7 @@ All relationships are visible in the diagram. The `Team_Player` table represents
 
 ---
 ## Tests
-![ERD](Photos/Tests.png)
+![TESTS](Photos/Tests.png)
 
 The project includes a comprehensive set of unit and integration tests that cover all key backend functionalities.
 All API endpoints are tested, including registration, login, password change, team management, and invitation handling. 
